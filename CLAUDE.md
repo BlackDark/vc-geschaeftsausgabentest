@@ -44,6 +44,10 @@ SPESEN_BIN=$PWD/bin/spesen pnpm --dir web e2e   # after mise run build
 
 ## Pull requests
 
+Standard procedure (owner decision): after pushing, open a ready-for-review pull request (drafts
+do not run CI), watch CI until it is green, fix failures on the branch, then merge it yourself
+(squash) and report the result. Ask first only when a change alters scope or financial results.
+
 - One feature per pull request; it carries only its own commits.
 - Before every push check whether the branch's pull request is still open. If it is merged, start
   again from the current `origin/main` and open a **new** pull request.
