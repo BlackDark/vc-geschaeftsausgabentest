@@ -12,6 +12,25 @@ Baseline date: 2026-10-18. These documents describe a fresh build. They make no 
 - Include company-paid travel costs, privately paid actual-cost/eligible-allowance lodging and standalone business outlays such as tools/software in a common quarterly/custom claim.
 - Add a small shared fixture package and first working flow; keep original files and use PDF+ZIP for Core.
 
+## Owner decisions 2026-10-19
+
+The project is now the owner's own tool, not an agent-comparison experiment. These decisions supersede conflicting statements elsewhere in the brief; the other documents were updated where they named the old choice.
+
+| Topic | Decision |
+| --- | --- |
+| Purpose | Personal tool for one employed managing director. The data model stays multi-user capable (ownership checks remain), but the UI optimizes for a single user. |
+| Stack | Go backend with Huma (code-first OpenAPI) and Hey API for the TypeScript client; React + TanStack Router/Query + shadcn/ui + Tailwind 4 SPA; SQLite with goose; Typst CLI for PDFs. Compared against Bun + TanStack Start, Rust + axum and Go + tygo; Go keeps the image (~60–80 MB) and memory small, Huma removes the hand-written spec. |
+| Employers | One employer profile per user in the UI (P03 reduced). The schema keeps an employer table so a second employer can be added later without migration of claims. |
+| Login | Password and OIDC (Pocket ID). Trusted-proxy header login (A19) is deferred. The password login stays as an emergency route when the identity provider is unavailable. |
+| FX | Manual rate or actual EUR debit only. Automatic ECB lookup is deferred. |
+| Rate tables | Inherited 2024–2026 CSVs are seeded; a further year is imported through a validated CLI command instead of an admin UI. Admin draft overrides remain. |
+| Export | One PDF containing the summary, calculation details and all receipt pages (numbered), plus the ZIP with originals, JSON/CSV and a SHA-256 manifest. This supersedes the "PDF may refer to evidence in the ZIP" reduction. |
+| Capture | Mobile camera capture and desktop upload are equally important. |
+| Trip types | Domestic multi-day, foreign, one-day and private-car mileage are all needed. |
+| Priorities | Ease of use and a well-structured, readable PDF are the owner's main quality goals. |
+| License | AGPL-3.0-only. |
+| Delivery | Docker Compose on the owner's server; image on GHCR (amd64 and arm64). |
+
 ## Inherited product decisions retained
 
 Employer reimbursement is the primary use case. Users own separate records, even when an admin shares the instance. Employers are separate per-user objects. The original restriction to personally paid, trip-bound expenses is superseded: record the payer explicitly and support standalone outlays. Claims are versioned documents with locking, reasoned unlocking and advances. German/English UI, date-based rate tables, explicit VAT portions and documented FX remain part of the product. Go/SQLite in one application container and Svelte/Vite remain the stack.
@@ -47,7 +66,7 @@ These decisions combine the owner-confirmed scope above with explicit working de
 2. Validate rate datasets and the detailed tax treatment of reimbursed own meals/hospitality, lodging eligibility, foreign VAT and unusual itineraries. Do not infer that full gross reimbursement is always tax-free.
 3. Define legally appropriate retention, deletion, storage location and operating procedures. The old spec and operations guide use different starting-year definitions (receipt date versus confirmation year), so neither was adopted as authoritative.
 4. Confirm original-file storage costs/privacy and any eventual compression targets using representative real receipts on target hardware. Consider native codecs only after measuring their packaging/performance trade-offs.
-5. Choose a project license before distributing code. No license choice is inferred from the source project's visibility.
+5. License: AGPL-3.0-only (decided 2026-10-19).
 
 These questions do not prevent a synthetic-data Core experiment. They limit production claims. Changes to Core scope or expected financial behavior must be recorded here and applied equally to compared agents.
 
