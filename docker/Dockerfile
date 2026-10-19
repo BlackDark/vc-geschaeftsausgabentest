@@ -38,9 +38,13 @@ RUN set -eu; \
     wget -qO /tmp/typst.tar.xz "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-${arch}-unknown-linux-musl.tar.xz"; \
     echo "$sum  /tmp/typst.tar.xz" | sha256sum -c -; \
     tar -xJf /tmp/typst.tar.xz -C /tmp; \
-    install -m 0755 "/tmp/typst-${arch}-unknown-linux-musl/typst" /typst
+    install -m 0755 "/tmp/typst-${arch}-unknown-linux-musl/typst" /typst; \
+    mkdir -p /rootfs/data
 
 FROM gcr.io/distroless/static-debian12:nonroot
+# /data must exist and belong to nonroot, so a fresh named volume inherits
+# a writable owner (distroless has no shell to fix it at runtime).
+COPY --from=typst --chown=65532:65532 /rootfs/ /
 COPY --from=typst /typst /usr/local/bin/typst
 COPY --from=server /out/spesen /usr/local/bin/spesen
 ENV SPESEN_DATA_DIR=/data \

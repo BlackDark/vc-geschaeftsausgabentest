@@ -106,6 +106,8 @@ jobs:
           docker run -d --name spesen --read-only --tmpfs /tmp -v spesen-data:/data -p 8080:8080 \
             -e SPESEN_SETUP_TOKEN=ci spesen:ci
           for i in $(seq 1 30); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
-          curl -fsS http://localhost:8080/api/session
+          curl -fsS http://localhost:8080/api/session || { docker logs spesen; exit 1; }
           docker exec spesen /usr/local/bin/typst --version
           test "$(docker inspect -f '{{.Config.User}}' spesen)" = "nonroot:nonroot"
+      - if: failure()
+        run: docker logs spesen || true
