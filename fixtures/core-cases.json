@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "purpose": "Synthetic comparison inputs, not production seed data. All monetary amounts below are integer EUR cents; VAT can be recorded as explicitly unknown for this small workflow fixture.",
+  "defaults": {
+    "owner": "User A",
+    "employer": "Example Company",
+    "currency": "EUR",
+    "timezone": "Europe/Berlin",
+    "period_start": "2026-04-01",
+    "period_end": "2026-06-30",
+    "evidence": "Use synthetic confirmed receipt uploads for payable expenses. No real personal documents are required."
+  },
+  "rates": {
+    "DE": {
+      "full_day_cents": 2800,
+      "partial_day_cents": 1400,
+      "lodging_cents": 2000
+    },
+    "TEST_FOREIGN": {
+      "full_day_cents": 7000,
+      "partial_day_cents": 4700,
+      "lodging_cents": 10000,
+      "note": "Synthetic foreign rate location; not a real country and not production data."
+    }
+  },
+  "cases": [
+    {
+      "id": "F01",
+      "name": "First working flow: travel and standalone outlays",
+      "trip": {
+        "start": "2026-04-13T08:00:00+02:00",
+        "end": "2026-04-15T18:00:00+02:00",
+        "rate_location": "DE",
+        "lodging": {
+          "nights": [
+            "2026-04-13",
+            "2026-04-14"
+          ],
+          "payer": "user",
+          "method": "actual",
+          "gross_cents": 17800
+        },
+        "provided_breakfast_dates": [
+          "2026-04-14",
+          "2026-04-15"
+        ]
+      },
+      "standalone_outlays": [
+        {
+          "date": "2026-04-16",
+          "category": "tools_equipment",
+          "gross_cents": 4000,
+          "payer": "user"
+        },
+        {
+          "date": "2026-04-17",
+          "category": "software_services",
+          "gross_cents": 2000,
+          "payer": "user"
+        }
+      ],
+      "advance_cents": 10000,
+      "expected": {
+        "daily_meal_cents": [
+          1400,
+          2240,
+          840
+        ],
+        "travel_reimbursement_cents": 22280,
+        "standalone_outlays_cents": 6000,
+        "reimbursement_total_cents": 28280,
+        "payout_cents": 18280
+      },
+      "correction": {
+        "action": "Unlock with reason, change software outlay from 2000 to 3000 and resubmit",
+        "expected_version": 2,
+        "expected_payout_cents": 19280,
+        "preserve_version_1": true
+      }
+    },
+    {
+      "id": "F02",
+      "name": "Foreign trip with three lodging payment methods",
+      "trip": {
+        "start": "2026-05-04T08:00:00+02:00",
+        "end": "2026-05-07T18:00:00+02:00",
+        "rate_location": "TEST_FOREIGN",
+        "day_schedule": "Confirmed synthetic location for all four dates. Rate location uses Europe/Berlin for this fixture to avoid timezone ambiguity.",
+        "lodging": [
+          {
+            "night": "2026-05-04",
+            "payer": "employer",
+            "gross_cents": 30000,
+            "method": "none"
+          },
+          {
+            "night": "2026-05-05",
+            "payer": "user",
+            "gross_cents": 16000,
+            "method": "actual"
+          },
+          {
+            "night": "2026-05-06",
+            "payer": "user",
+            "gross_cents": 9000,
+            "method": "allowance",
+            "eligible": true
+          }
+        ],
+        "provided_breakfast_dates": [
+          "2026-05-05"
+        ],
+        "transport": {
+          "payer": "user",
+          "gross_cents": 3000
+        }
+      },
+      "expected": {
+        "daily_meal_cents": [
+          4700,
+          5600,
+          7000,
+          4700
+        ],
+        "meals_cents": 22000,
+        "company_paid_display_cents": 30000,
+        "actual_lodging_reimbursement_cents": 16000,
+        "lodging_allowance_cents": 10000,
+        "replaced_actual_lodging_display_cents": 9000,
+        "transport_reimbursement_cents": 3000,
+        "payout_cents": 51000
+      },
+      "negative_case": "Changing the company-paid night to allowance must fail; company-paid breakfast still reduces the meal allowance."
+    },
+    {
+      "id": "F03",
+      "name": "Standalone outlay only",
+      "trips": [],
+      "standalone_outlays": [
+        {
+          "date": "2026-06-02",
+          "category": "tools_equipment",
+          "gross_cents": 8000,
+          "payer": "user"
+        }
+      ],
+      "expected": {
+        "travel_reimbursement_cents": 0,
+        "standalone_outlays_cents": 8000,
+        "payout_cents": 8000,
+        "dummy_trip_required": false
+      }
+    }
+  ]
+}
