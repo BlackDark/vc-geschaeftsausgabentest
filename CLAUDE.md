@@ -48,6 +48,9 @@ Standard procedure (owner decision): after pushing, open a ready-for-review pull
 do not run CI), watch CI until it is green, fix failures on the branch, then merge it yourself
 (squash) and report the result. Ask first only when a change alters scope or financial results.
 
+- Commit messages and pull request titles follow Conventional Commits (`feat:`, `fix:`,
+  `docs:`, `test:`, `refactor:`, `chore:`, `ci:`, `build:`; optional scope such as
+  `feat(calc):`). The squash commit uses the pull request title.
 - One feature per pull request; it carries only its own commits.
 - Before every push check whether the branch's pull request is still open. If it is merged, start
   again from the current `origin/main` and open a **new** pull request.
