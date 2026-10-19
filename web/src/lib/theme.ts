@@ -7,9 +7,9 @@ function readStored(): Theme {
     const v = localStorage.getItem(key);
     if (v === "light" || v === "dark" || v === "system") return v;
   } catch {
-    // storage unavailable: fall back to system
+    // storage unavailable: use the default
   }
-  return "system";
+  return "dark";
 }
 
 /** Applies the theme to <html> and remembers it for the next visit. */
@@ -31,3 +31,12 @@ export function applyStoredTheme() {
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", () => applyTheme(readStored()));
 }
+
+/** Tracks whether <html> currently carries the dark class. */
+export function subscribeDark(onChange: () => void): () => void {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+
+export const isDark = () => document.documentElement.classList.contains("dark");

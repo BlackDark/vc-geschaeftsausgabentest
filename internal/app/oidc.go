@@ -48,7 +48,7 @@ func (a *App) OIDCLogin(ctx context.Context, id OIDCIdentity, p OIDCPolicy) (*Us
 			if name == "" {
 				name = id.Email
 			}
-			res, err := tx.ExecContext(ctx, `INSERT INTO users(name, email, oidc_issuer, oidc_subject, created_at) VALUES (?, ?, ?, ?, ?)`, name, id.Email, id.Issuer, id.Subject, a.stamp())
+			res, err := tx.ExecContext(ctx, `INSERT INTO users(name, email, oidc_issuer, oidc_subject, theme, created_at) VALUES (?, ?, ?, ?, ?, ?)`, name, id.Email, id.Issuer, id.Subject, DefaultTheme, a.stamp())
 			if err != nil {
 				return err
 			}

@@ -1636,9 +1636,9 @@
           },
           "theme": {
             "enum": [
-              "system",
+              "dark",
               "light",
-              "dark"
+              "system"
             ],
             "type": "string"
           }

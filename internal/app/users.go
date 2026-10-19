@@ -13,6 +13,9 @@ import (
 	"github.com/alexedwards/argon2id"
 )
 
+// DefaultTheme is the UI theme of new accounts (owner decision: dark).
+const DefaultTheme = "dark"
+
 // User is an account. Admin is effective admin (local or OIDC group).
 type User struct {
 	ID             int64  `json:"id"`
@@ -108,7 +111,7 @@ func (a *App) insertUser(ctx context.Context, tx *sql.Tx, username, name, passwo
 	if err != nil {
 		return 0, err
 	}
-	res, err := tx.ExecContext(ctx, `INSERT INTO users(username, name, password_hash, is_admin, created_at) VALUES (?, ?, ?, ?, ?)`, username, strings.TrimSpace(name), hash, boolInt(admin), a.stamp())
+	res, err := tx.ExecContext(ctx, `INSERT INTO users(username, name, password_hash, is_admin, theme, created_at) VALUES (?, ?, ?, ?, ?, ?)`, username, strings.TrimSpace(name), hash, boolInt(admin), DefaultTheme, a.stamp())
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE") {
 			return 0, Invalid("user.username_taken", "username already exists")
@@ -211,7 +214,7 @@ type ProfileInput struct {
 	Name           string `json:"name" minLength:"1" maxLength:"200"`
 	Email          string `json:"email" maxLength:"200" required:"false"`
 	Locale         string `json:"locale" enum:"de,en"`
-	Theme          string `json:"theme" enum:"system,light,dark"`
+	Theme          string `json:"theme" enum:"dark,light,system"`
 	EmployeeNumber string `json:"employeeNumber" maxLength:"50" required:"false"`
 	Address        string `json:"address" maxLength:"500" required:"false"`
 	IBAN           string `json:"iban" maxLength:"40" required:"false"`
