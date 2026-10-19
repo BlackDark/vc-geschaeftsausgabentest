@@ -25,6 +25,11 @@ type yearQuery struct {
 	Year int `query:"year" minimum:"2000" maximum:"2100"`
 }
 
+// EmployerOut wraps the optional employer.
+type EmployerOut struct {
+	Employer *app.Employer `json:"employer,omitempty" doc:"absent until the employer is set up"`
+}
+
 type limitQuery struct {
 	Limit int `query:"limit" minimum:"1" maximum:"500" default:"100"`
 }
@@ -43,12 +48,12 @@ func (s *Server) registerProfile(api huma.API) {
 			return &empty{}, s.app.ChangePassword(ctx, u, in.Body.Current, in.Body.Next)
 		})
 	authed(s, api, huma.Operation{OperationID: "getEmployer", Method: http.MethodGet, Path: "/api/employer", Tags: []string{"profile"}},
-		func(ctx context.Context, u *app.User, _ *empty) (*body[*app.Employer], error) {
+		func(ctx context.Context, u *app.User, _ *empty) (*body[EmployerOut], error) {
 			e, err := s.app.DefaultEmployer(ctx, u.ID)
 			if err == app.ErrNotFound {
-				return &body[*app.Employer]{Body: nil}, nil
+				return &body[EmployerOut]{}, nil
 			}
-			return wrap(e, err)
+			return wrap(EmployerOut{Employer: e}, err)
 		})
 	authed(s, api, huma.Operation{OperationID: "saveEmployer", Method: http.MethodPut, Path: "/api/employer", Tags: []string{"profile"}},
 		func(ctx context.Context, u *app.User, in *body[app.EmployerInput]) (*body[*app.Employer], error) {

@@ -11,7 +11,7 @@ import (
 
 // SessionInfo tells the UI how to log in and who is logged in.
 type SessionInfo struct {
-	User            *app.User `json:"user"`
+	User            *app.User `json:"user,omitempty" doc:"absent when not logged in"`
 	NeedsSetup      bool      `json:"needsSetup"`
 	PasswordEnabled bool      `json:"passwordEnabled"`
 	OIDCEnabled     bool      `json:"oidcEnabled"`

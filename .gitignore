@@ -2,7 +2,7 @@
 /bin/
 /web/dist/*
 !/web/dist/.keep
-/web/node_modules/
+node_modules/
 /web/test-results/
 /web/playwright-report/
 # local data
@@ -12,3 +12,4 @@
 *.db-shm
 mise.local.toml
 .env
+/web/src/paraglide/

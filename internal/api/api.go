@@ -50,6 +50,9 @@ func (e *ErrorModel) Error() string  { return e.Message }
 func (e *ErrorModel) GetStatus() int { return e.Status }
 
 func init() {
+	// Go handlers always return empty slices, never nil, so arrays are not
+	// nullable in the generated TypeScript types.
+	huma.DefaultArrayNullable = false
 	huma.NewError = func(status int, msg string, errs ...error) huma.StatusError {
 		code := "http_error"
 		switch status {
