@@ -461,7 +461,7 @@ export type ProfileInput = {
     iban?: string;
     locale: 'de' | 'en';
     name: string;
-    theme: 'system' | 'light' | 'dark';
+    theme: 'dark' | 'light' | 'system';
 };
 
 export type RateRef = {

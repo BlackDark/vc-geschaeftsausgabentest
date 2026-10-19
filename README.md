@@ -41,7 +41,7 @@ Open the URL, enter the setup token and create your account. Configuration, Pock
 - Standalone outlays (tools, software) in the same claim as travel
 - Receipt inbox with mobile camera capture, multipage PDFs and self-issued receipts (Eigenbeleg)
 - Quarterly/monthly/custom claims with advances, blockers and warnings, versioned submission, payment tracking
-- German and English UI, light/dark theme, usable from 360 px
+- German and English UI, dark theme by default (light and system selectable), usable from 360 px
 - Password and OIDC login (Pocket ID), per-user data isolation, audit trail
 
 ## 📚 Documentation

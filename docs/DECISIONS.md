@@ -48,6 +48,7 @@ Ordinary implementation choices made without changing scope or financial results
 | PDF | Inter font (OFL) bundled; summary, per-trip calculation, notes, sources, confirmation lines, receipt index and every receipt page. |
 | Generated code | Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0 lacks the compiler API; the app itself is type-checked with TypeScript 7. |
 | pnpm | 10.28.0, the version that wrote the lockfile; pnpm 12 was not verified. |
+| Theme | Dark is the default for new accounts and before login (owner request); light and system remain selectable in the settings. The claim PDF stays light for printing. |
 
 ## Inherited product decisions retained
 

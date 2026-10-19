@@ -97,6 +97,9 @@ func TestF01FirstWorkingFlow(t *testing.T) {
 	if u.ID != admin.ID {
 		t.Fatal("login user mismatch")
 	}
+	if u.Theme != DefaultTheme || DefaultTheme != "dark" {
+		t.Fatalf("new accounts start dark, got %q", u.Theme)
+	}
 	must(a.SaveEmployer(ctx, u, EmployerInput{Name: "Example Company", Address: "Musterstraße 1\n10115 Berlin"}))
 
 	trip := must(a.CreateTrip(ctx, u, TripInput{

@@ -171,9 +171,9 @@ function ProfileCard() {
           </Field>
           <Field label={m.theme()} htmlFor="theme">
             <Select id="theme" value={p.theme} onChange={set("theme")}>
-              <option value="system">{m.theme_system()}</option>
-              <option value="light">{m.theme_light()}</option>
               <option value="dark">{m.theme_dark()}</option>
+              <option value="light">{m.theme_light()}</option>
+              <option value="system">{m.theme_system()}</option>
             </Select>
           </Field>
           <div className="sm:col-span-2">

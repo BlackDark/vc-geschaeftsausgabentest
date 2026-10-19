@@ -253,9 +253,9 @@ export const zProfileInput = z.object({
     locale: z.enum(['de', 'en']),
     name: z.string().min(1).max(200),
     theme: z.enum([
-        'system',
+        'dark',
         'light',
-        'dark'
+        'system'
     ])
 });
 
