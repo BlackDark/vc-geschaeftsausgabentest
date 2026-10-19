@@ -18,23 +18,23 @@ type StopDTO struct {
 	TZ       string `json:"tz"`
 	Country  string `json:"country" minLength:"2" maxLength:"2"`
 	City     string `json:"city,omitempty"`
-	Business bool   `json:"business"`
+	Business bool   `json:"business" required:"false"`
 }
 
 // DayDTO holds per-day meal inputs.
 type DayDTO struct {
 	Date             string `json:"date" format:"date"`
-	Breakfast        bool   `json:"breakfast"`
-	Lunch            bool   `json:"lunch"`
-	Dinner           bool   `json:"dinner"`
-	ContribBreakfast int64  `json:"contribBreakfast" minimum:"0"`
-	ContribLunch     int64  `json:"contribLunch" minimum:"0"`
-	ContribDinner    int64  `json:"contribDinner" minimum:"0"`
+	Breakfast        bool   `json:"breakfast" required:"false"`
+	Lunch            bool   `json:"lunch" required:"false"`
+	Dinner           bool   `json:"dinner" required:"false"`
+	ContribBreakfast int64  `json:"contribBreakfast" minimum:"0" required:"false"`
+	ContribLunch     int64  `json:"contribLunch" minimum:"0" required:"false"`
+	ContribDinner    int64  `json:"contribDinner" minimum:"0" required:"false"`
 	BreakfastOrigin  string `json:"breakfastOrigin,omitempty" doc:"set when the flag was suggested from a hotel invoice"`
 	OverrideCountry  string `json:"overrideCountry,omitempty"`
 	OverrideCity     string `json:"overrideCity,omitempty"`
 	OverrideReason   string `json:"overrideReason,omitempty"`
-	Excluded         bool   `json:"excluded"`
+	Excluded         bool   `json:"excluded" required:"false"`
 	ExcludeReason    string `json:"excludeReason,omitempty"`
 }
 

@@ -457,7 +457,7 @@ func (a *App) preview(ctx context.Context, q querier, userID, id int64) (*Previe
 // SubmitInput confirms the reviewed revision and acknowledges warnings.
 type SubmitInput struct {
 	Revision            string `json:"revision"`
-	AcknowledgeWarnings bool   `json:"acknowledgeWarnings"`
+	AcknowledgeWarnings bool   `json:"acknowledgeWarnings" required:"false"`
 }
 
 // SubmitClaim freezes a version and publishes its PDF and ZIP (P14–P16).
@@ -487,7 +487,7 @@ func (a *App) SubmitClaim(ctx context.Context, u *User, id int64, in SubmitInput
 		if len(p.Warnings) > 0 && !in.AcknowledgeWarnings {
 			return &Error{Status: 422, Code: "claim.warnings_unacknowledged", Message: "acknowledge the warnings before submitting"}
 		}
-		user, err := scanUser(tx.QueryRowContext(ctx, `SELECT `+userCols+` FROM users WHERE id = ?`, u.ID))
+		user, err := scanUser(tx.QueryRowContext(ctx, `SELECT `+userCols+` FROM users u WHERE u.id = ?`, u.ID))
 		if err != nil {
 			return err
 		}

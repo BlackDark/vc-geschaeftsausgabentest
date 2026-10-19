@@ -24,11 +24,11 @@ type ExpenseInput struct {
 	FXRate            string            `json:"fxRate,omitempty" doc:"foreign units per EUR 1"`
 	FXDate            string            `json:"fxDate,omitempty"`
 	EURDebit          *int64            `json:"eurDebit,omitempty" doc:"actual EUR debit in cents"`
-	VATUnknown        bool              `json:"vatUnknown"`
+	VATUnknown        bool              `json:"vatUnknown" required:"false"`
 	VAT               []calc.VATPortion `json:"vat,omitempty"`
 	Nights            []string          `json:"nights,omitempty" doc:"lodging only: nights covered by this invoice"`
-	IncludesBreakfast bool              `json:"includesBreakfast"`
-	Fuel              bool              `json:"fuel"`
+	IncludesBreakfast bool              `json:"includesBreakfast" required:"false"`
+	Fuel              bool              `json:"fuel" required:"false"`
 	Hospitality       *calc.Hospitality `json:"hospitality,omitempty"`
 	ReceiptIDs        []int64           `json:"receiptIds,omitempty"`
 	Version           int               `json:"version,omitempty"`

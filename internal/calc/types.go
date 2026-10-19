@@ -150,7 +150,7 @@ func (c CostType) IsOutlay() bool {
 type VATPortion struct {
 	GrossMinor int64  `json:"grossMinor"`
 	RateBP     int64  `json:"rateBp"`
-	Country    string `json:"country"`
+	Country    string `json:"country" required:"false"`
 	StatedNet  *int64 `json:"statedNet,omitempty"`
 	StatedVAT  *int64 `json:"statedVat,omitempty"`
 }
@@ -160,9 +160,9 @@ type Hospitality struct {
 	Occasion      string   `json:"occasion"`
 	Place         string   `json:"place"`
 	Participants  []string `json:"participants"`
-	ExternalCount int      `json:"externalCount"`
-	Confirmed     bool     `json:"confirmed"`
-	TipMinor      int64    `json:"tipMinor"`
+	ExternalCount int      `json:"externalCount" required:"false"`
+	Confirmed     bool     `json:"confirmed" required:"false"`
+	TipMinor      int64    `json:"tipMinor" required:"false"`
 }
 
 // Expense is a recorded charge, trip-linked or standalone.

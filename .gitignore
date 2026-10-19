@@ -1,0 +1,14 @@
+# build output
+/bin/
+/web/dist/*
+!/web/dist/.keep
+/web/node_modules/
+/web/test-results/
+/web/playwright-report/
+# local data
+/data-dev/
+*.db
+*.db-wal
+*.db-shm
+mise.local.toml
+.env

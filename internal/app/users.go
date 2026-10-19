@@ -31,7 +31,7 @@ type User struct {
 	HasPassword    bool   `json:"hasPassword"`
 }
 
-const userCols = `id, coalesce(username, ''), name, email, is_admin, oidc_admin, active, locale, theme, employee_number, address, iban, oidc_subject IS NOT NULL, password_hash IS NOT NULL`
+const userCols = `u.id, coalesce(u.username, ''), u.name, u.email, u.is_admin, u.oidc_admin, u.active, u.locale, u.theme, u.employee_number, u.address, u.iban, u.oidc_subject IS NOT NULL, u.password_hash IS NOT NULL`
 
 func scanUser(row interface{ Scan(...any) error }) (*User, error) {
 	var u User
@@ -46,7 +46,7 @@ func scanUser(row interface{ Scan(...any) error }) (*User, error) {
 
 // UserByID loads a user.
 func (a *App) UserByID(ctx context.Context, id int64) (*User, error) {
-	return scanUser(a.DB.QueryRowContext(ctx, `SELECT `+userCols+` FROM users WHERE id = ?`, id))
+	return scanUser(a.DB.QueryRowContext(ctx, `SELECT `+userCols+` FROM users u WHERE u.id = ?`, id))
 }
 
 // NeedsSetup reports whether no administrator exists yet.
@@ -209,12 +209,12 @@ func (a *App) SetActive(ctx context.Context, actor *User, id int64, active bool,
 // ProfileInput updates the user's own profile.
 type ProfileInput struct {
 	Name           string `json:"name" minLength:"1" maxLength:"200"`
-	Email          string `json:"email" maxLength:"200"`
+	Email          string `json:"email" maxLength:"200" required:"false"`
 	Locale         string `json:"locale" enum:"de,en"`
 	Theme          string `json:"theme" enum:"system,light,dark"`
-	EmployeeNumber string `json:"employeeNumber" maxLength:"50"`
-	Address        string `json:"address" maxLength:"500"`
-	IBAN           string `json:"iban" maxLength:"40"`
+	EmployeeNumber string `json:"employeeNumber" maxLength:"50" required:"false"`
+	Address        string `json:"address" maxLength:"500" required:"false"`
+	IBAN           string `json:"iban" maxLength:"40" required:"false"`
 }
 
 // UpdateProfile saves profile fields.
@@ -340,7 +340,7 @@ func (a *App) SessionUser(ctx context.Context, token string) (*User, error) {
 	if token == "" {
 		return nil, ErrUnauthorized
 	}
-	u, err := scanUser(a.DB.QueryRowContext(ctx, `SELECT `+prefixed("u.", userCols)+` FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ? AND u.active = 1`,
+	u, err := scanUser(a.DB.QueryRowContext(ctx, `SELECT `+userCols+` FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ? AND u.active = 1`,
 		tokenHash(token), a.stamp()))
 	if err != nil {
 		return nil, ErrUnauthorized
@@ -352,16 +352,4 @@ func (a *App) SessionUser(ctx context.Context, token string) (*User, error) {
 func (a *App) EndSession(ctx context.Context, token string) error {
 	_, err := a.DB.ExecContext(ctx, `DELETE FROM sessions WHERE token_hash = ?`, tokenHash(token))
 	return err
-}
-
-func prefixed(p, cols string) string {
-	parts := strings.Split(cols, ", ")
-	for i, c := range parts {
-		if strings.HasPrefix(c, "coalesce(") {
-			parts[i] = strings.Replace(c, "coalesce(", "coalesce("+p, 1)
-		} else {
-			parts[i] = p + c
-		}
-	}
-	return strings.Join(parts, ", ")
 }

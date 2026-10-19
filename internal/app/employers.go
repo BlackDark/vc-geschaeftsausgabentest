@@ -18,7 +18,7 @@ type Employer struct {
 // EmployerInput creates or updates the employer.
 type EmployerInput struct {
 	Name    string `json:"name" minLength:"1" maxLength:"200"`
-	Address string `json:"address" maxLength:"500"`
+	Address string `json:"address" maxLength:"500" required:"false"`
 	Version int    `json:"version,omitempty"`
 }
 
