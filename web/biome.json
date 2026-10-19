@@ -10,6 +10,9 @@
       "!openapi.json",
       "!tools/codegen/node_modules",
       "!playwright-report",
+      "!test-results",
+      "!.tanstack",
+      "!project.inlang",
       "!test-results"
     ]
   },

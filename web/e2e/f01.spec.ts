@@ -39,7 +39,10 @@ test("F01 first working flow", async ({ page }) => {
   // Hotel invoice with breakfast, receipt captured in the dialog.
   await page.getByRole("button", { name: "Ausgabe", exact: true }).click();
   const dialog = page.getByRole("dialog");
-  await dialog.locator('input[type="file"]').first().setInputFiles({ name: "hotel.png", mimeType: "image/png", buffer: receiptPng(1) });
+  await dialog
+    .locator('input[type="file"]')
+    .first()
+    .setInputFiles({ name: "hotel.png", mimeType: "image/png", buffer: receiptPng(1) });
   await expect(dialog.getByRole("button", { name: /unbestätigt/ })).toBeVisible();
   await dialog.getByLabel("Kostenart", { exact: true }).selectOption("lodging");
   await dialog.getByLabel("Datum", { exact: true }).fill("2026-04-15");
@@ -61,7 +64,10 @@ test("F01 first working flow", async ({ page }) => {
     await page.goto("/outlays");
     await page.getByRole("button", { name: "Auslage" }).first().click();
     const d = page.getByRole("dialog");
-    await d.locator('input[type="file"]').first().setInputFiles({ name: `outlay-${i}.png`, mimeType: "image/png", buffer: receiptPng(10 + i) });
+    await d
+      .locator('input[type="file"]')
+      .first()
+      .setInputFiles({ name: `outlay-${i}.png`, mimeType: "image/png", buffer: receiptPng(10 + i) });
     await expect(d.getByRole("button", { name: /unbestätigt/ })).toBeVisible();
     await d.getByLabel("Kostenart", { exact: true }).selectOption(o.type);
     await d.getByLabel("Datum", { exact: true }).fill(o.date);

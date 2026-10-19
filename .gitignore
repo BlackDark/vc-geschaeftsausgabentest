@@ -13,3 +13,6 @@ node_modules/
 mise.local.toml
 .env
 /web/src/paraglide/
+/web/.tanstack/
+/web/project.inlang/cache/
+/web/project.inlang/.gitignore

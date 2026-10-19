@@ -6,13 +6,17 @@ async function login(page: Page) {
     data: { token: "e2e-setup-token", username: "user-a", name: "User A", password: "correct horse battery" },
   });
   if (!setup.ok()) {
-    const res = await page.request.post("/api/login", { data: { username: "user-a", password: "correct horse battery" } });
+    const res = await page.request.post("/api/login", {
+      data: { username: "user-a", password: "correct horse battery" },
+    });
     expect(res.ok()).toBeTruthy();
   }
 }
 
 async function noHorizontalScroll(page: Page) {
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
   expect(overflow, `horizontal overflow on ${page.url()}`).toBeLessThanOrEqual(0);
 }
 
@@ -35,7 +39,9 @@ test("mobile layout and receipt capture", async ({ page }) => {
 
   // Capture via the camera button in the bottom bar, then confirm in the inbox.
   await page.goto("/");
-  await page.locator('nav input[type="file"]').setInputFiles({ name: "photo.png", mimeType: "image/png", buffer: receiptPng(42) });
+  await page
+    .locator('nav input[type="file"]')
+    .setInputFiles({ name: "photo.png", mimeType: "image/png", buffer: receiptPng(42) });
   await expect(page).toHaveURL(/\/receipts\?focus=/);
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("button", { name: "Lesbar – bestätigen" })).toBeVisible();

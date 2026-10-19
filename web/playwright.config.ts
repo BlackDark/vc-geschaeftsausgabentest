@@ -26,7 +26,12 @@ export default defineConfig({
     {
       name: "mobile",
       // 360 px is the narrowest supported width (P19).
-      use: { ...devices["Pixel 7"], viewport: { width: 360, height: 780 }, locale: "de-DE", launchOptions: { executablePath } },
+      use: {
+        ...devices["Pixel 7"],
+        viewport: { width: 360, height: 780 },
+        locale: "de-DE",
+        launchOptions: { executablePath },
+      },
       testMatch: /mobile\.spec\.ts/,
       dependencies: ["desktop"],
     },

@@ -9,7 +9,8 @@ export function receiptPng(n: number): Buffer {
   for (let y = 0; y < h; y++) raw[y * (w * 3 + 1)] = 0; // filter type "none" per row
   for (let y = 10; y < h - 10; y += 8) {
     const len = 20 + ((n * 7 + y) % 30);
-    for (let x = 6; x < 6 + len; x++) raw.fill(40, y * (w * 3 + 1) + 1 + x * 3, y * (w * 3 + 1) + 1 + x * 3 + 3);
+    for (let x = 6; x < 6 + len; x++)
+      raw.fill(40, y * (w * 3 + 1) + 1 + x * 3, y * (w * 3 + 1) + 1 + x * 3 + 3);
   }
   const chunk = (type: string, data: Buffer) => {
     const len = Buffer.alloc(4);
@@ -24,7 +25,12 @@ export function receiptPng(n: number): Buffer {
   ihdr.writeUInt32BE(h, 4);
   ihdr[8] = 8;
   ihdr[9] = 2;
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk("IHDR", ihdr),
+    chunk("IDAT", deflateSync(raw)),
+    chunk("IEND", Buffer.alloc(0)),
+  ]);
 }
 
 function crc32(buf: Buffer): number {
@@ -37,5 +43,6 @@ function crc32(buf: Buffer): number {
 }
 
 export async function shot(page: Page, name: string) {
-  if (process.env.E2E_SCREENSHOTS) await page.screenshot({ path: `${process.env.E2E_SCREENSHOTS}/${name}.png`, fullPage: true });
+  if (process.env.E2E_SCREENSHOTS)
+    await page.screenshot({ path: `${process.env.E2E_SCREENSHOTS}/${name}.png`, fullPage: true });
 }
