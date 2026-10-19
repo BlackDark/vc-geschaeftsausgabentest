@@ -47,7 +47,7 @@ Ordinary implementation choices made without changing scope or financial results
 | Receipt validation | Uploads are detected by content and then rendered by Typst; a file Typst cannot read is rejected. The rendered PNG is the preview (no EXIF). |
 | PDF | Inter font (OFL) bundled; summary, per-trip calculation, notes, sources, confirmation lines, receipt index and every receipt page. |
 | Generated code | Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0 lacks the compiler API; the app itself is type-checked with TypeScript 7. |
-| pnpm | 10.28.0, the version that wrote the lockfile; pnpm 12 was not verified. |
+| pnpm | 12, pinned in `mise.toml` and `packageManager`. Its default one-day minimum release age stays on; `minimumReleaseAgeExclude` in `pnpm-workspace.yaml` lists versions taken in on purpose before that day passed. |
 | Theme | Dark is the default for new accounts and before login (owner request); light and system remain selectable in the settings. The claim PDF stays light for printing. |
 | Dependency updates | Renovate with the owner's agent-presets template (`.github/renovate.json5`): weekly, grouped, patch/minor automerged after CI, majors by hand. The codegen package stays on TypeScript 6 (Hey API needs the compiler API); Typst bumps are manual because the Dockerfile pins checksums. |
 

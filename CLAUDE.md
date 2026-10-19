@@ -64,7 +64,7 @@ do not run CI), watch CI until it is green, fix failures on the branch, then mer
 ## Code style
 
 Technology choices follow the techstack-starter skill; deviations and why: Go backend with Huma
-and Hey API instead of TanStack Start (small image, see DECISIONS.md); pnpm 10.28 (lockfile);
+and Hey API instead of TanStack Start (small image, see DECISIONS.md); pnpm 12 (lockfile);
 Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0 has no compiler API.
 
 Clean Code, written functionally: clear names, small functions that do one thing, dependencies
