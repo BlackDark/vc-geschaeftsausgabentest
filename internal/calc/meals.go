@@ -339,7 +339,7 @@ func (c *computer) mealRate(d Date, loc Location, tripID int64) (MealRate, bool)
 
 // dayResult renders one trip's view of a date.
 func (c *computer) dayResult(t *Trip, td *tripDays, d Date, e *dateEntitlement) Day {
-	day := Day{Date: d, Type: DayNone, Location: td.locations[d], AbsenceMinutes: int64(td.absence[d] / time.Minute), Notes: td.notes[d], RuleIDs: []string{RuleMealBase}}
+	day := Day{Date: d, Type: DayNone, Location: td.locations[d], AbsenceMinutes: int64(td.absence[d] / time.Minute), Notes: td.notes[d], RuleIDs: []string{RuleMealBase}, Deductions: []Deduction{}}
 	cand, has := td.candidates[d]
 	if !has || e == nil {
 		if len(td.notes[d]) > 0 {
@@ -362,7 +362,7 @@ func (c *computer) dayResult(t *Trip, td *tripDays, d Date, e *dateEntitlement) 
 	}
 	day.Type = e.typ
 	day.Base = e.base
-	day.Deductions = e.deductions
+	day.Deductions = append(day.Deductions, e.deductions...)
 	day.AfterDeduction = e.after
 	day.Excluded = e.excluded
 	if e.typ == DayNone {
