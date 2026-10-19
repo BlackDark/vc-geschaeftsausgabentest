@@ -1,0 +1,31 @@
+# Example deployment. TLS terminates at your reverse proxy (Traefik, Caddy …).
+services:
+  spesen:
+    image: ghcr.io/blackdark/vc-geschaeftsausgabentest:latest
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m
+    environment:
+      SPESEN_BASE_URL: https://spesen.example.com
+      # One-time token for creating the first admin (or read the file /data/setup-token).
+      SPESEN_SETUP_TOKEN_FILE: /run/secrets/setup_token
+      # Pocket ID (optional): create an OIDC client with redirect URI
+      # https://spesen.example.com/auth/oidc/callback
+      # SPESEN_OIDC_ISSUER: https://id.example.com
+      # SPESEN_OIDC_CLIENT_ID: spesen
+      # SPESEN_OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_secret
+      # SPESEN_OIDC_ADMIN_GROUPS: spesen-admins
+    secrets:
+      - setup_token
+    volumes:
+      - spesen-data:/data
+    ports:
+      - "127.0.0.1:8080:8080"
+
+secrets:
+  setup_token:
+    file: ./secrets/setup_token
+
+volumes:
+  spesen-data:

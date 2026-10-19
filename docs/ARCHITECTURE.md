@@ -1,29 +1,30 @@
 # Architecture
 
-## Retained choices
+## Technology choices
 
-| Area | Constraint |
+Decided with the owner on 2026-10-19 (see [DECISIONS.md](DECISIONS.md#owner-decisions-2026-10-19)). The previous Go/Svelte/sqlc/OpenAPI-first stack was replaced by the owner's default stack where it fits, keeping Go for a small, static backend.
+
+| Area | Choice |
 | --- | --- |
-| Backend | Go, standard-library `net/http` routing, structured logging. One authoritative calculation module with no network/database dependencies. |
-| Persistence | SQLite in WAL mode using the cgo-free `modernc.org/sqlite` driver; `sqlc` for queries and `goose` for migrations. Enable foreign keys and use transactions for domain changes. |
-| Frontend | Svelte 5, TypeScript, Vite SPA, shadcn-svelte and Tailwind CSS 4. Go embeds and serves the built SPA. |
-| API | OpenAPI as the contract, generated Go types/server support and TypeScript client/types. Structured error codes with UI translations. |
-| Localization | German/English message catalogs; retain Paraglide unless a verified compatibility issue warrants a documented replacement. Use locale-aware amounts/dates. |
-| PDF | Typst for the claim summary, with local templates and fonts. Receipt rasterization, codecs and PDF/A tooling remain replaceable. |
-| Tooling | pnpm and Node 24 LTS for frontend builds. Biome for supported formatting/linting, `svelte-check` for types, Go formatting and `golangci-lint`. No ESLint requirement. |
-| Verification | Go tests, Vitest for meaningful frontend logic, Playwright for complete user flows against the built application. |
-| Deployment | One multi-stage Dockerfile, nonroot runtime, linux/amd64 and linux/arm64. A persistent data volume and temporary working space. TLS terminates at the reverse proxy. |
+| Backend | Go (version pinned in `go.mod`/`mise.toml`), standard-library `net/http` with **Huma v2** for typed operations, request validation and a generated OpenAPI 3.1 document (code first, no hand-written spec). Structured logging with `log/slog`. One authoritative calculation package (`internal/calc`) without network/database dependencies. |
+| Persistence | SQLite in WAL mode with the cgo-free `modernc.org/sqlite` driver, foreign keys on, transactions for domain changes. Plain `database/sql` queries; migrations with **goose** embedded in the binary. No sqlc (one fewer generator for ~20 tables). |
+| Authentication | Password (Argon2id via `alexedwards/argon2id`) and OIDC (Pocket ID; `zitadel/oidc` relying party with PKCE, state and nonce). Own server-side session table, `http.CrossOriginProtection` for CSRF. |
+| Frontend | React SPA built with Vite: TanStack Router (file-based), TanStack Query, TanStack Form where a form grows, shadcn/ui (Base UI) copied into the repo, Tailwind CSS 4, lucide icons. Go embeds and serves the built SPA. |
+| API contract | Huma generates `openapi.json`; **Hey API** (`@hey-api/openapi-ts`) generates the TypeScript client, Zod schemas and TanStack Query hooks. Generated files are never edited; CI regenerates and fails on a diff. Structured error codes are translated in the UI. |
+| Localization | Paraglide JS with `messages/{de,en}.json`; locale-aware amounts and dates. German is the default UI language. |
+| PDF | Typst CLI as a subprocess with fixed local templates and bundled fonts. Typst embeds receipt images and PDF pages, so the claim PDF can append every receipt page. |
+| Tooling | `mise.toml` pins Go, Node and pnpm. pnpm, Biome, `tsc --noEmit`, Vitest, Playwright for the frontend; `gofmt`, `go vet`, `go test` for Go. |
+| Deployment | One multi-stage Dockerfile, nonroot runtime, linux/amd64 and linux/arm64, published to GHCR. Persistent data volume, read-only root filesystem, TLS at the reverse proxy. Docker Compose is the documented way to run it. |
 
-Resolve actual compatible package/tool versions at implementation time and pin them in manifests/lockfiles. Historical patch versions and version-compatibility claims are not requirements. Keep the backend build cgo-free. Typst is an additional runtime binary; “one application container” does not mean literally one executable.
+Keep the backend build cgo-free. Typst is an additional runtime binary; "one application container" does not mean literally one executable.
 
 ## Authentication contract
 
 - Passwords use Argon2id. Sessions use random tokens, HttpOnly cookies, SameSite policy, Secure in HTTPS deployments, expiry and server-side revocation. Protect unsafe browser requests against CSRF and bound login attempts. Setup requires an operator-supplied secret or one-time setup token; disable setup after an admin exists.
 - OIDC must work with Pocket ID and conforming providers. Validate issuer, signature, audience, expiry, state and nonce; use Authorization Code with PKCE. Stable external identity is `(issuer, subject)`, not email. Disable automatic email-based linking by default. Allow explicit operator-authorized identity linking with an audit event.
 - Configure allowed/admin group claims and mapping. Provision an OIDC user only when allowed. Reevaluate group-derived roles on login; distinguish them from local admin membership. Local deactivation takes precedence over all login modes. Protect the last active administrator from accidental removal.
-- Proxy login accepts configured identity/group headers only from explicitly trusted proxy CIDRs. The proxy must strip client-supplied identity headers before setting its own. Determine trust from the direct network peer; forwarded headers do not establish trust. Reject untrusted identity headers, and ensure an alternate password/OIDC route cannot accidentally adopt them.
-- Bind proxy users to a stable configured proxy identity namespace and subject; apply allowed/admin groups and controlled provisioning. Do not merge accounts because display names/emails happen to match. Logout must end local access and document any external provider/proxy session behavior.
-- Configure password, OIDC and proxy modes independently via environment variables with file-based secret alternatives. Invalid combinations fail at startup; at least one login mode must remain usable. Test each mode and combinations.
+- Trusted-proxy header login is deferred (owner decision 2026-10-19); Pocket ID is used through OIDC directly. Do not merge accounts because display names/emails happen to match. Logout must end local access and document the OIDC provider session behavior.
+- Configure password and OIDC modes independently via environment variables with file-based secret alternatives. Invalid combinations fail at startup; at least one login mode must remain usable. Test each mode and the combination.
 
 ## Application scope
 
@@ -47,9 +48,9 @@ Preserve uploaded JPEG/PNG/PDF bytes and SHA-256 under generated storage keys. A
 
 Generate modest JPEG/PNG previews and, when needed, JPEG export derivatives. Defaults should favor legibility; no universal byte-size or SSIM threshold is specified. The original remains authoritative. Automatic corner detection, perspective correction, shadow removal, AVIF/WebP encoders and disposal of originals are outside Core.
 
-Core PDF: employer/user identity, claim number/version/period, travel/outlay subtotals, totals and advances, trip overview, standalone outlays, daily calculation details, mileage, expenses/VAT/FX, warnings, source references and receipt filenames/numbers. The ZIP carries all referenced originals. Use versioned English JSON/CSV filenames and fields, UTF-8, ISO dates, currency codes and unambiguous decimal amounts. Document the CSV dialect. Expose payer, actual gross and reimbursable EUR amount separately, and distinguish trip-linked from standalone expenses. Provide clear receipt-to-expense references and a manifest for every payload file except the manifest itself.
+Core PDF: one document with employer/user identity, claim number/version/period, travel/outlay subtotals, totals and advances, trip overview, standalone outlays, daily calculation details, mileage, expenses/VAT/FX, warnings, source references and receipt numbers, followed by every receipt page (images and PDF pages) labelled with its receipt number. The ZIP additionally carries all referenced originals. Use versioned English JSON/CSV filenames and fields, UTF-8, ISO dates, currency codes and unambiguous decimal amounts. Document the CSV dialect. Expose payer, actual gross and reimbursable EUR amount separately, and distinguish trip-linked from standalone expenses. Provide clear receipt-to-expense references and a manifest for every payload file except the manifest itself.
 
-Use temporary directories, subprocess deadlines and fixed templates; pass user content as data. Export requires no network access. Verify actual Typst capabilities before promising a PDF standard or PDF receipt embedding. Content consistency is required; byte-identical fresh PDF generation across tool versions is not. Downloading an existing version returns its stored bytes.
+Use temporary directories, subprocess deadlines and fixed templates; pass user content as data. Export requires no network access. Typst 0.15 was verified to embed PDF pages as images (2026-10-19); PDF/A remains an extension. Content consistency is required; byte-identical fresh PDF generation across tool versions is not. Downloading an existing version returns its stored bytes.
 
 ## Security and operation
 

@@ -1,0 +1,15 @@
+Spesen
+Copyright (C) 2026 BlackDark and contributors
+
+Spesen is free software: you can redistribute it and/or modify it under the
+terms of the GNU Affero General Public License, version 3, as published by the
+Free Software Foundation (see LICENSE). It comes without any warranty.
+
+Spesen is not tax advice. Rates and rules are provided as data with their
+sources; the employer remains responsible for the payroll tax treatment.
+
+Bundled third-party material:
+- Inter font (internal/export/fonts), SIL Open Font License 1.1, see
+  internal/export/fonts/LICENSE-Inter.txt.
+- Foreign travel rates (data/*.csv) extracted from the annual letters of the
+  German Federal Ministry of Finance, see data/README.md.

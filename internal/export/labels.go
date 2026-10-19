@@ -1,0 +1,111 @@
+package export
+
+// labels are the PDF texts per locale. Issue codes mirror the UI catalog.
+var labels = map[string]map[string]any{
+	"de": {
+		"kicker": "Reisekosten und Auslagen", "title": "Abrechnung", "claim": "Abrechnung", "number": "Nummer", "version": "Version",
+		"period": "Zeitraum", "submitted": "Eingereicht", "employee": "Mitarbeiter/in", "employer": "Arbeitgeber",
+		"employeeNumber": "Personalnummer", "iban": "IBAN", "email": "E-Mail", "claimTitle": "Bezeichnung",
+		"correction": "Korrigierte Fassung", "summary": "Zusammenfassung", "travelTotal": "Reisekosten",
+		"outlaysTotal": "Sonstige Auslagen", "reimbursement": "Erstattungsbetrag", "lessAdvances": "abzüglich Vorschüsse",
+		"payout": "Auszahlungsbetrag", "repayment": "Rückzahlung an den Arbeitgeber",
+		"repaymentHint": "Die Vorschüsse übersteigen den Erstattungsbetrag; der Betrag ist an den Arbeitgeber zurückzuzahlen.",
+		"trips":         "Reisen", "when": "Zeitraum", "purpose": "Anlass", "meals": "Verpflegung", "lodging": "Übernachtung",
+		"mileage": "Fahrtkosten", "expenses": "Ausgaben", "transportCol": "Fahrtkosten", "otherCol": "Sonstiges", "viaInvoice": "über Rechnung", "rulesLine": "Regelwerk: Regel-IDs C01–C22 je Rechenzeile in snapshot-v1.json", "total": "Summe", "sum": "Summe", "outlays": "Sonstige Auslagen",
+		"date": "Datum", "supplierPurpose": "Lieferant / Zweck", "category": "Kategorie", "receipt": "Beleg", "gross": "Brutto",
+		"reimbursed": "Erstattung", "advances": "Vorschüsse", "note": "Notiz", "amount": "Betrag", "trip": "Reise",
+		"departure": "Abfahrt", "return": "Rückkehr", "destination": "Ziel", "project": "Projekt", "notes": "Notizen",
+		"itinerary": "Reiseverlauf", "arrival": "Ankunft", "location": "Ort", "business": "Dienstlich", "yes": "ja", "no": "nein",
+		"mealAllowance": "Verpflegungsmehraufwand", "dayType": "Tagesart", "rateLocation": "Satzort", "allowance": "Pauschale",
+		"deductions": "Kürzungen", "contribution": "Zuzahlung", "excluded": "ausgeschlossen (Dreimonatsfrist)",
+		"allocatedElsewhere": "einer anderen Reise am selben Tag zugeordnet", "frozenElsewhere": "bereits abgerechnet:",
+		"night": "Nacht", "arrangement": "Unterbringung", "vehicle": "Fahrzeug", "distance": "Strecke", "ratePerKm": "Satz",
+		"costType": "Kostenart", "paidBy": "Bezahlt von", "companyPaidNote": "Vom Arbeitgeber bezahlt (nur informativ, keine Erstattung):",
+		"tripTotal": "Summe dieser Reise", "notesTitle": "Hinweise", "notesIntro": "Folgende Hinweise wurden bei der Einreichung angezeigt und bestätigt. Sie stellen keine steuerliche Beurteilung dar.",
+		"sources": "Berechnungsgrundlagen", "sourcesIntro": "Verwendete Sätze und Regeln (mit Revision):",
+		"disclaimer":   "Erstellt mit einer selbst betriebenen Anwendung. Die Abrechnung ist keine Steuerberatung; die lohnsteuerliche Behandlung obliegt dem Arbeitgeber.",
+		"confirmation": "Bestätigung", "confirmationText": "Ich bestätige, dass die Angaben vollständig und richtig sind und die Reisen dienstlich veranlasst waren.",
+		"signEmployee": "Datum, Unterschrift Mitarbeiter/in", "signEmployer": "Datum, sachlich und rechnerisch geprüft",
+		"receiptIndex": "Belegverzeichnis", "file": "Datei", "pages": "Seiten",
+		"receiptIndexNote": "Die Originaldateien liegen unverändert im ZIP-Export; die Prüfsummen stehen in manifest-sha256.txt.",
+		"selfIssued":       "Eigenbeleg", "payee": "Empfänger", "issuer": "Ausgestellt von", "missingReason": "Grund für fehlenden Beleg",
+		"generated": "Erstellt am", "page": "Seite",
+		"dayTypes":   map[string]string{"full": "Ganzer Tag (24 h)", "partial": "An-/Abreisetag", "one_day": "Eintägig", "none": "Keine Pauschale", "assigned_elsewhere": "Andere Reise"},
+		"nightKinds": map[string]string{"private_actual": "Privat bezahlt – tatsächliche Kosten", "private_allowance": "Übernachtungspauschale", "private_none": "Privat bezahlt – keine Erstattung", "employer": "Vom Arbeitgeber bezahlt/gestellt", "in_transit": "Unterwegs (Zug/Flug)", "none": "Keine Übernachtung", "": "nicht angegeben"},
+		"mealsNames": map[string]string{"breakfast": "Frühstück", "lunch": "Mittagessen", "dinner": "Abendessen"},
+		"vehicles":   map[string]string{"car": "Pkw", "other_motor_vehicle": "Anderes Kfz"},
+		"payers":     map[string]string{"user": "privat", "employer": "Arbeitgeber"},
+		"costTypes":  map[string]string{"transport": "Fahrt/Transport", "meals": "Verpflegung", "lodging": "Übernachtung", "incidental": "Reisenebenkosten", "hospitality": "Bewirtung", "tools_equipment": "Werkzeug/Ausstattung", "software_services": "Software/Dienste", "other_outlay": "Sonstige Auslage"},
+		"reasons":    map[string]string{"employer_paid": "vom Arbeitgeber bezahlt", "replaced_by_allowance": "durch Übernachtungspauschale ersetzt", "not_reimbursed": "keine Erstattung gewählt", "fx_missing": "Wechselkurs fehlt"},
+		"severities": map[string]string{"warning": "Warnung:", "notice": "Hinweis:", "blocker": "Blocker:"},
+		"issueCodes": issueCodesDE,
+	},
+	"en": {
+		"kicker": "Travel and out-of-pocket expenses", "title": "Expense claim", "claim": "Claim", "number": "Number", "version": "Version",
+		"period": "Period", "submitted": "Submitted", "employee": "Employee", "employer": "Employer",
+		"employeeNumber": "Employee number", "iban": "IBAN", "email": "Email", "claimTitle": "Title",
+		"correction": "Corrected version", "summary": "Summary", "travelTotal": "Travel expenses",
+		"outlaysTotal": "Standalone outlays", "reimbursement": "Reimbursement total", "lessAdvances": "less advances",
+		"payout": "Payout amount", "repayment": "Repayment to employer",
+		"repaymentHint": "Advances exceed the reimbursement total; the difference is to be repaid to the employer.",
+		"trips":         "Trips", "when": "Period", "purpose": "Purpose", "meals": "Meals", "lodging": "Lodging",
+		"mileage": "Mileage", "expenses": "Expenses", "transportCol": "Transport", "otherCol": "Other", "viaInvoice": "via invoice", "rulesLine": "Rules: rule IDs C01–C22 per calculation line in snapshot-v1.json", "total": "Total", "sum": "Total", "outlays": "Standalone outlays",
+		"date": "Date", "supplierPurpose": "Supplier / purpose", "category": "Category", "receipt": "Receipt", "gross": "Gross",
+		"reimbursed": "Reimbursed", "advances": "Advances", "note": "Note", "amount": "Amount", "trip": "Trip",
+		"departure": "Departure", "return": "Return", "destination": "Destination", "project": "Project", "notes": "Notes",
+		"itinerary": "Itinerary", "arrival": "Arrival", "location": "Location", "business": "Business", "yes": "yes", "no": "no",
+		"mealAllowance": "Meal allowance", "dayType": "Day type", "rateLocation": "Rate location", "allowance": "Allowance",
+		"deductions": "Deductions", "contribution": "contribution", "excluded": "excluded (three-month limit)",
+		"allocatedElsewhere": "allocated to another trip on the same day", "frozenElsewhere": "already claimed:",
+		"night": "Night", "arrangement": "Arrangement", "vehicle": "Vehicle", "distance": "Distance", "ratePerKm": "Rate",
+		"costType": "Cost type", "paidBy": "Paid by", "companyPaidNote": "Paid by the employer (informational, not reimbursed):",
+		"tripTotal": "Trip total", "notesTitle": "Notes", "notesIntro": "These notes were shown and acknowledged at submission. They are not a tax assessment.",
+		"sources": "Calculation basis", "sourcesIntro": "Rates and rules used (with revision):",
+		"disclaimer":   "Created with a self-hosted application. This claim is not tax advice; payroll tax treatment is the employer's responsibility.",
+		"confirmation": "Confirmation", "confirmationText": "I confirm that the information is complete and correct and that the trips were business-related.",
+		"signEmployee": "Date, employee signature", "signEmployer": "Date, checked by employer",
+		"receiptIndex": "Receipt index", "file": "File", "pages": "Pages",
+		"receiptIndexNote": "The unchanged original files are in the ZIP export; checksums are listed in manifest-sha256.txt.",
+		"selfIssued":       "Self-issued receipt", "payee": "Payee", "issuer": "Issued by", "missingReason": "Reason for missing receipt",
+		"generated": "Generated", "page": "Page",
+		"dayTypes":   map[string]string{"full": "Full day (24 h)", "partial": "Arrival/departure day", "one_day": "One-day trip", "none": "No allowance", "assigned_elsewhere": "Other trip"},
+		"nightKinds": map[string]string{"private_actual": "Paid privately – actual cost", "private_allowance": "Lodging allowance", "private_none": "Paid privately – not reimbursed", "employer": "Paid/provided by employer", "in_transit": "In transit", "none": "No overnight stay", "": "not specified"},
+		"mealsNames": map[string]string{"breakfast": "Breakfast", "lunch": "Lunch", "dinner": "Dinner"},
+		"vehicles":   map[string]string{"car": "Car", "other_motor_vehicle": "Other motor vehicle"},
+		"payers":     map[string]string{"user": "self", "employer": "employer"},
+		"costTypes":  map[string]string{"transport": "Transport", "meals": "Meals", "lodging": "Lodging", "incidental": "Incidental", "hospitality": "Hospitality", "tools_equipment": "Tools/equipment", "software_services": "Software/services", "other_outlay": "Other outlay"},
+		"reasons":    map[string]string{"employer_paid": "paid by employer", "replaced_by_allowance": "replaced by lodging allowance", "not_reimbursed": "not reimbursed", "fx_missing": "exchange rate missing"},
+		"severities": map[string]string{"warning": "Warning:", "notice": "Note:", "blocker": "Blocker:"},
+		"issueCodes": issueCodesEN,
+	},
+}
+
+var issueCodesDE = map[string]string{
+	"receipt.missing":                 "Kein Beleg verknüpft.",
+	"receipt.duplicate":               "Derselbe Beleg wurde mehrfach hochgeladen.",
+	"vat.not_recorded":                "Umsatzsteuer nicht erfasst.",
+	"vat.stated_deviates":             "Ausgewiesene Umsatzsteuer weicht von der Berechnung ab.",
+	"expense.outside_trip":            "Ausgabe liegt außerhalb des Reisezeitraums.",
+	"mileage.fuel_and_mileage":        "Tankbeleg und Kilometerpauschale auf derselben Reise – mögliche Doppelerstattung.",
+	"lodging.actual_without_expense":  "Übernachtung mit tatsächlichen Kosten ohne Hotelrechnung.",
+	"meal.provided_without_allowance": "Gestellte Mahlzeit an einem Tag ohne Verpflegungspauschale (lohnsteuerliche Prüfung durch Arbeitgeber).",
+}
+
+var issueCodesEN = map[string]string{
+	"receipt.missing":                 "No receipt linked.",
+	"receipt.duplicate":               "The same receipt was uploaded more than once.",
+	"vat.not_recorded":                "VAT not recorded.",
+	"vat.stated_deviates":             "Stated VAT differs from the calculated amount.",
+	"expense.outside_trip":            "Expense is outside the trip period.",
+	"mileage.fuel_and_mileage":        "Fuel receipt and mileage allowance on the same trip – possible double reimbursement.",
+	"lodging.actual_without_expense":  "Actual-cost night without a hotel invoice.",
+	"meal.provided_without_allowance": "Provided meal on a day without meal allowance (payroll review by employer).",
+}
+
+// Labels returns the label set for a locale, defaulting to German.
+func Labels(locale string) map[string]any {
+	if l, ok := labels[locale]; ok {
+		return l
+	}
+	return labels["de"]
+}

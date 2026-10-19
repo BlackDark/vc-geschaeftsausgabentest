@@ -1,0 +1,4878 @@
+{
+  "components": {
+    "schemas": {
+      "AccountSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "admin": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "oidcLinked": {
+            "type": "boolean"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "name",
+          "admin",
+          "active",
+          "oidcLinked"
+        ],
+        "type": "object"
+      },
+      "ActiveBody": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "reason": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [
+          "active"
+        ],
+        "type": "object"
+      },
+      "Advance": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "description": "EUR cents",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "claimId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "note": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "claimId",
+          "locked",
+          "date",
+          "amount"
+        ],
+        "type": "object"
+      },
+      "AdvanceInput": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "description": "EUR cents",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "amount"
+        ],
+        "type": "object"
+      },
+      "AuditEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "entityId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "entity",
+          "entityId",
+          "action",
+          "reason",
+          "data",
+          "at"
+        ],
+        "type": "object"
+      },
+      "Claim": {
+        "additionalProperties": false,
+        "properties": {
+          "advanceIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "currentVersion": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "employerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "number": {
+            "type": "string"
+          },
+          "outlayIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "paidAt": {
+            "type": "string"
+          },
+          "paidNote": {
+            "type": "string"
+          },
+          "payout": {
+            "description": "payout of the current submitted version, or 0 for drafts",
+            "format": "int64",
+            "type": "integer"
+          },
+          "periodEnd": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "submitted",
+              "paid"
+            ],
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "tripIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimVersion"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "employerId",
+          "title",
+          "periodStart",
+          "periodEnd",
+          "status",
+          "number",
+          "currentVersion",
+          "version",
+          "tripIds",
+          "outlayIds",
+          "advanceIds",
+          "versions",
+          "payout"
+        ],
+        "type": "object"
+      },
+      "ClaimInput": {
+        "additionalProperties": false,
+        "properties": {
+          "periodEnd": {
+            "format": "date",
+            "type": "string"
+          },
+          "periodStart": {
+            "format": "date",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "periodStart",
+          "periodEnd"
+        ],
+        "type": "object"
+      },
+      "ClaimItemBody": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "include": {
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "trip",
+              "outlay",
+              "advance"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "include",
+          "kind",
+          "id"
+        ],
+        "type": "object"
+      },
+      "ClaimTotals": {
+        "additionalProperties": false,
+        "properties": {
+          "advances": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "outlays": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "payout": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reimbursement": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "repayment": {
+            "type": "boolean"
+          },
+          "travel": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "travel",
+          "outlays",
+          "reimbursement",
+          "advances",
+          "payout",
+          "repayment"
+        ],
+        "type": "object"
+      },
+      "ClaimVersion": {
+        "additionalProperties": false,
+        "properties": {
+          "payout": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pdfSha256": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string"
+          },
+          "supersededAt": {
+            "type": "string"
+          },
+          "unlockReason": {
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "zipSha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "submittedAt",
+          "payout",
+          "pdfSha256",
+          "zipSha256"
+        ],
+        "type": "object"
+      },
+      "CreateUserBody": {
+        "additionalProperties": false,
+        "properties": {
+          "admin": {
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 500,
+            "minLength": 10,
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "name",
+          "password"
+        ],
+        "type": "object"
+      },
+      "Dashboard": {
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/Claim"
+            },
+            "type": "array"
+          },
+          "draftClaims": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "hasEmployer": {
+            "type": "boolean"
+          },
+          "inboxReceipts": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "openPayout": {
+            "description": "submitted, not yet paid",
+            "format": "int64",
+            "type": "integer"
+          },
+          "unclaimedOutlays": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unclaimedTotal": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unclaimedTrips": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hasEmployer",
+          "inboxReceipts",
+          "unclaimedTrips",
+          "unclaimedOutlays",
+          "unclaimedTotal",
+          "draftClaims",
+          "openPayout",
+          "claims"
+        ],
+        "type": "object"
+      },
+      "Day": {
+        "additionalProperties": false,
+        "properties": {
+          "absenceMinutes": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "afterDeduction": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "allocatedTo": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "base": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          },
+          "deductions": {
+            "items": {
+              "$ref": "#/components/schemas/Deduction"
+            },
+            "type": "array"
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "frozenElsewhere": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fullRate": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "payable": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/RateRef"
+          },
+          "ruleIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "type",
+          "location",
+          "absenceMinutes",
+          "fullRate",
+          "base",
+          "deductions",
+          "afterDeduction",
+          "excluded",
+          "frozenElsewhere",
+          "payable",
+          "ruleIds"
+        ],
+        "type": "object"
+      },
+      "DayDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "breakfast": {
+            "type": "boolean"
+          },
+          "breakfastOrigin": {
+            "description": "set when the flag was suggested from a hotel invoice",
+            "type": "string"
+          },
+          "contribBreakfast": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "contribDinner": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "contribLunch": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "dinner": {
+            "type": "boolean"
+          },
+          "excludeReason": {
+            "type": "string"
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "lunch": {
+            "type": "boolean"
+          },
+          "overrideCity": {
+            "type": "string"
+          },
+          "overrideCountry": {
+            "type": "string"
+          },
+          "overrideReason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date"
+        ],
+        "type": "object"
+      },
+      "Deduction": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "contribution": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "gross": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "meal": {
+            "type": "string"
+          },
+          "percent": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "meal",
+          "percent",
+          "gross",
+          "contribution",
+          "amount"
+        ],
+        "type": "object"
+      },
+      "Employer": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "version"
+        ],
+        "type": "object"
+      },
+      "EmployerInput": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "EmployerOut": {
+        "additionalProperties": false,
+        "properties": {
+          "employer": {
+            "$ref": "#/components/schemas/Employer",
+            "description": "absent until the employer is set up"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "location": {
+            "description": "Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'",
+            "type": "string"
+          },
+          "message": {
+            "description": "Error message text",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value at the given location"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorModel": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "status": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "Expense": {
+        "additionalProperties": false,
+        "properties": {
+          "claimId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "costType": {
+            "enum": [
+              "transport",
+              "meals",
+              "lodging",
+              "incidental",
+              "hospitality",
+              "tools_equipment",
+              "software_services",
+              "other_outlay"
+            ],
+            "type": "string"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "employerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "eurDebit": {
+            "description": "actual EUR debit in cents",
+            "format": "int64",
+            "type": "integer"
+          },
+          "fuel": {
+            "type": "boolean"
+          },
+          "fxDate": {
+            "type": "string"
+          },
+          "fxRate": {
+            "description": "foreign units per EUR 1",
+            "type": "string"
+          },
+          "grossMinor": {
+            "description": "gross amount in minor units of the currency",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "hospitality": {
+            "$ref": "#/components/schemas/Hospitality"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "includesBreakfast": {
+            "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "nights": {
+            "description": "lodging only: nights covered by this invoice",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "payer": {
+            "enum": [
+              "user",
+              "employer"
+            ],
+            "type": "string"
+          },
+          "receiptIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "receipts": {
+            "items": {
+              "$ref": "#/components/schemas/ReceiptRef"
+            },
+            "type": "array"
+          },
+          "supplier": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "vat": {
+            "items": {
+              "$ref": "#/components/schemas/VATPortion"
+            },
+            "type": "array"
+          },
+          "vatUnknown": {
+            "type": "boolean"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "employerId",
+          "claimId",
+          "locked",
+          "receipts",
+          "date",
+          "costType",
+          "payer",
+          "currency",
+          "grossMinor"
+        ],
+        "type": "object"
+      },
+      "ExpenseInput": {
+        "additionalProperties": false,
+        "properties": {
+          "costType": {
+            "enum": [
+              "transport",
+              "meals",
+              "lodging",
+              "incidental",
+              "hospitality",
+              "tools_equipment",
+              "software_services",
+              "other_outlay"
+            ],
+            "type": "string"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "eurDebit": {
+            "description": "actual EUR debit in cents",
+            "format": "int64",
+            "type": "integer"
+          },
+          "fuel": {
+            "type": "boolean"
+          },
+          "fxDate": {
+            "type": "string"
+          },
+          "fxRate": {
+            "description": "foreign units per EUR 1",
+            "type": "string"
+          },
+          "grossMinor": {
+            "description": "gross amount in minor units of the currency",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "hospitality": {
+            "$ref": "#/components/schemas/Hospitality"
+          },
+          "includesBreakfast": {
+            "type": "boolean"
+          },
+          "nights": {
+            "description": "lodging only: nights covered by this invoice",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "payer": {
+            "enum": [
+              "user",
+              "employer"
+            ],
+            "type": "string"
+          },
+          "receiptIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "supplier": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "vat": {
+            "items": {
+              "$ref": "#/components/schemas/VATPortion"
+            },
+            "type": "array"
+          },
+          "vatUnknown": {
+            "type": "boolean"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "costType",
+          "payer",
+          "currency",
+          "grossMinor"
+        ],
+        "type": "object"
+      },
+      "ExpenseRef": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "supplier": {
+            "type": "string"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "tripId",
+          "date",
+          "supplier",
+          "description",
+          "locked"
+        ],
+        "type": "object"
+      },
+      "ExpenseResult": {
+        "additionalProperties": false,
+        "properties": {
+          "costType": {
+            "type": "string"
+          },
+          "expenseId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fxRule": {
+            "type": "string"
+          },
+          "grossEur": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "payer": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reimbursable": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "ruleIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "vat": {
+            "items": {
+              "$ref": "#/components/schemas/VATResult"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "expenseId",
+          "costType",
+          "payer",
+          "grossEur",
+          "reimbursable",
+          "ruleIds"
+        ],
+        "type": "object"
+      },
+      "Hospitality": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmed": {
+            "type": "boolean"
+          },
+          "externalCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "occasion": {
+            "type": "string"
+          },
+          "participants": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "place": {
+            "type": "string"
+          },
+          "tipMinor": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "occasion",
+          "place",
+          "participants"
+        ],
+        "type": "object"
+      },
+      "Issue": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "expenseId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "params": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "severity",
+          "ruleId",
+          "code"
+        ],
+        "type": "object"
+      },
+      "JourneyDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "distanceMeters": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "vehicle": {
+            "enum": [
+              "car",
+              "other_motor_vehicle"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "vehicle",
+          "distanceMeters"
+        ],
+        "type": "object"
+      },
+      "JourneyResult": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "centsPerKm": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          },
+          "distanceMeters": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "journeyId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/RateRef"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "journeyId",
+          "date",
+          "vehicle",
+          "distanceMeters",
+          "centsPerKm",
+          "amount",
+          "ruleId"
+        ],
+        "type": "object"
+      },
+      "Location": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "country"
+        ],
+        "type": "object"
+      },
+      "LocationOption": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "country",
+          "city",
+          "label"
+        ],
+        "type": "object"
+      },
+      "LoginBody": {
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "Night": {
+        "additionalProperties": false,
+        "properties": {
+          "allowance": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/RateRef"
+          },
+          "ruleId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "kind",
+          "location",
+          "allowance",
+          "ruleId"
+        ],
+        "type": "object"
+      },
+      "NightDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "private_actual",
+              "private_allowance",
+              "private_none",
+              "employer",
+              "in_transit",
+              "none"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "OutlayListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "claimId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "costType": {
+            "enum": [
+              "transport",
+              "meals",
+              "lodging",
+              "incidental",
+              "hospitality",
+              "tools_equipment",
+              "software_services",
+              "other_outlay"
+            ],
+            "type": "string"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "employerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "eurDebit": {
+            "description": "actual EUR debit in cents",
+            "format": "int64",
+            "type": "integer"
+          },
+          "fuel": {
+            "type": "boolean"
+          },
+          "fxDate": {
+            "type": "string"
+          },
+          "fxRate": {
+            "description": "foreign units per EUR 1",
+            "type": "string"
+          },
+          "grossMinor": {
+            "description": "gross amount in minor units of the currency",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "hospitality": {
+            "$ref": "#/components/schemas/Hospitality"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "includesBreakfast": {
+            "type": "boolean"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "nights": {
+            "description": "lodging only: nights covered by this invoice",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "payer": {
+            "enum": [
+              "user",
+              "employer"
+            ],
+            "type": "string"
+          },
+          "receiptIds": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "receipts": {
+            "items": {
+              "$ref": "#/components/schemas/ReceiptRef"
+            },
+            "type": "array"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ExpenseResult"
+          },
+          "supplier": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "vat": {
+            "items": {
+              "$ref": "#/components/schemas/VATPortion"
+            },
+            "type": "array"
+          },
+          "vatUnknown": {
+            "type": "boolean"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "result",
+          "issues",
+          "id",
+          "employerId",
+          "claimId",
+          "locked",
+          "receipts",
+          "date",
+          "costType",
+          "payer",
+          "currency",
+          "grossMinor"
+        ],
+        "type": "object"
+      },
+      "PasswordBody": {
+        "additionalProperties": false,
+        "properties": {
+          "current": {
+            "type": "string"
+          },
+          "next": {
+            "maxLength": 500,
+            "minLength": 10,
+            "type": "string"
+          }
+        },
+        "required": [
+          "current",
+          "next"
+        ],
+        "type": "object"
+      },
+      "PaymentInput": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [
+          "date"
+        ],
+        "type": "object"
+      },
+      "Preview": {
+        "additionalProperties": false,
+        "properties": {
+          "advances": {
+            "items": {
+              "$ref": "#/components/schemas/Advance"
+            },
+            "type": "array"
+          },
+          "blockers": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array"
+          },
+          "claim": {
+            "$ref": "#/components/schemas/Claim"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array"
+          },
+          "outlays": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewOutlay"
+            },
+            "type": "array"
+          },
+          "revision": {
+            "description": "identifies the current inputs; submit must name it",
+            "type": "string"
+          },
+          "suggestions": {
+            "$ref": "#/components/schemas/Suggestions"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/ClaimTotals"
+          },
+          "trips": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewTrip"
+            },
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "trips",
+          "outlays",
+          "advances",
+          "totals",
+          "blockers",
+          "warnings",
+          "notices",
+          "revision",
+          "suggestions"
+        ],
+        "type": "object"
+      },
+      "PreviewOutlay": {
+        "additionalProperties": false,
+        "properties": {
+          "expense": {
+            "$ref": "#/components/schemas/Expense"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ExpenseResult"
+          }
+        },
+        "required": [
+          "expense",
+          "result"
+        ],
+        "type": "object"
+      },
+      "PreviewTrip": {
+        "additionalProperties": false,
+        "properties": {
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/Expense"
+            },
+            "type": "array"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TripResult"
+          },
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          }
+        },
+        "required": [
+          "trip",
+          "result",
+          "expenses"
+        ],
+        "type": "object"
+      },
+      "ProfileInput": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "employeeNumber": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "iban": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "locale": {
+            "enum": [
+              "de",
+              "en"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "theme": {
+            "enum": [
+              "system",
+              "light",
+              "dark"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "locale",
+          "theme"
+        ],
+        "type": "object"
+      },
+      "RateRef": {
+        "additionalProperties": false,
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "revision": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source": {
+            "type": "string"
+          },
+          "table": {
+            "type": "string"
+          },
+          "year": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "table",
+          "year",
+          "location",
+          "source",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "ReasonBody": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "type": "object"
+      },
+      "Receipt": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmedAt": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "duplicate": {
+            "description": "another receipt of this user has the same SHA-256",
+            "type": "boolean"
+          },
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenseRef"
+            },
+            "type": "array"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "hasPreview": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "file",
+              "self_issued"
+            ],
+            "type": "string"
+          },
+          "mime": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "pages": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "selfIssued": {
+            "$ref": "#/components/schemas/SelfIssued"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "inbox",
+              "confirmed",
+              "void"
+            ],
+            "type": "string"
+          },
+          "voidReason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "number",
+          "filename",
+          "mime",
+          "size",
+          "pages",
+          "sha256",
+          "duplicate",
+          "hasPreview",
+          "note",
+          "createdAt",
+          "expenses"
+        ],
+        "type": "object"
+      },
+      "ReceiptRef": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "kind",
+          "name"
+        ],
+        "type": "object"
+      },
+      "SelfIssued": {
+        "additionalProperties": false,
+        "properties": {
+          "amountMinor": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "issuer": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "payee": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "purpose": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "reason": {
+            "description": "why no third-party receipt exists",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "amountMinor",
+          "currency",
+          "payee",
+          "purpose",
+          "issuer",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "SessionInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "needsSetup": {
+            "type": "boolean"
+          },
+          "oidcEnabled": {
+            "type": "boolean"
+          },
+          "oidcLabel": {
+            "type": "string"
+          },
+          "passwordEnabled": {
+            "type": "boolean"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User",
+            "description": "absent when not logged in"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "needsSetup",
+          "passwordEnabled",
+          "oidcEnabled",
+          "oidcLabel",
+          "version"
+        ],
+        "type": "object"
+      },
+      "SetupBody": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 500,
+            "minLength": 10,
+            "type": "string"
+          },
+          "token": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "username",
+          "name",
+          "password"
+        ],
+        "type": "object"
+      },
+      "StopDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "arrival": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "business": {
+            "type": "boolean"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          },
+          "tz": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arrival",
+          "tz",
+          "country"
+        ],
+        "type": "object"
+      },
+      "SubmitInput": {
+        "additionalProperties": false,
+        "properties": {
+          "acknowledgeWarnings": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "type": "object"
+      },
+      "Suggestions": {
+        "additionalProperties": false,
+        "properties": {
+          "advances": {
+            "items": {
+              "$ref": "#/components/schemas/Advance"
+            },
+            "type": "array"
+          },
+          "outlays": {
+            "items": {
+              "$ref": "#/components/schemas/Expense"
+            },
+            "type": "array"
+          },
+          "trips": {
+            "items": {
+              "$ref": "#/components/schemas/Trip"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "trips",
+          "outlays",
+          "advances"
+        ],
+        "type": "object"
+      },
+      "Trip": {
+        "additionalProperties": false,
+        "properties": {
+          "claimId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "claimLabel": {
+            "type": "string"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/DayDTO"
+            },
+            "type": "array"
+          },
+          "destination": {
+            "maxLength": 300,
+            "type": "string"
+          },
+          "employerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "end": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "endTz": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "journeys": {
+            "items": {
+              "$ref": "#/components/schemas/JourneyDTO"
+            },
+            "type": "array"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "nights": {
+            "items": {
+              "$ref": "#/components/schemas/NightDTO"
+            },
+            "type": "array"
+          },
+          "notes": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "project": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "start": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "startTz": {
+            "type": "string"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopDTO"
+            },
+            "type": "array"
+          },
+          "version": {
+            "description": "required for updates (optimistic concurrency)",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "employerId",
+          "claimId",
+          "locked",
+          "startDate",
+          "endDate",
+          "purpose",
+          "start",
+          "startTz",
+          "end",
+          "endTz"
+        ],
+        "type": "object"
+      },
+      "TripDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/Expense"
+            },
+            "type": "array"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TripResult"
+          },
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          }
+        },
+        "required": [
+          "trip",
+          "result",
+          "expenses",
+          "issues"
+        ],
+        "type": "object"
+      },
+      "TripInput": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/DayDTO"
+            },
+            "type": "array"
+          },
+          "destination": {
+            "maxLength": 300,
+            "type": "string"
+          },
+          "end": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "endTz": {
+            "type": "string"
+          },
+          "journeys": {
+            "items": {
+              "$ref": "#/components/schemas/JourneyDTO"
+            },
+            "type": "array"
+          },
+          "nights": {
+            "items": {
+              "$ref": "#/components/schemas/NightDTO"
+            },
+            "type": "array"
+          },
+          "notes": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "project": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "start": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "startTz": {
+            "type": "string"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopDTO"
+            },
+            "type": "array"
+          },
+          "version": {
+            "description": "required for updates (optimistic concurrency)",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "purpose",
+          "start",
+          "startTz",
+          "end",
+          "endTz"
+        ],
+        "type": "object"
+      },
+      "TripListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "blockers": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "claimId": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "claimLabel": {
+            "type": "string"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/DayDTO"
+            },
+            "type": "array"
+          },
+          "destination": {
+            "maxLength": 300,
+            "type": "string"
+          },
+          "employerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "end": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "endTz": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "journeys": {
+            "items": {
+              "$ref": "#/components/schemas/JourneyDTO"
+            },
+            "type": "array"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "nights": {
+            "items": {
+              "$ref": "#/components/schemas/NightDTO"
+            },
+            "type": "array"
+          },
+          "notes": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "project": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "start": {
+            "description": "local time YYYY-MM-DDTHH:MM",
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "startTz": {
+            "type": "string"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopDTO"
+            },
+            "type": "array"
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "version": {
+            "description": "required for updates (optimistic concurrency)",
+            "format": "int64",
+            "type": "integer"
+          },
+          "warnings": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "blockers",
+          "warnings",
+          "id",
+          "employerId",
+          "claimId",
+          "locked",
+          "startDate",
+          "endDate",
+          "purpose",
+          "start",
+          "startTz",
+          "end",
+          "endTz"
+        ],
+        "type": "object"
+      },
+      "TripResult": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/Day"
+            },
+            "type": "array"
+          },
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenseResult"
+            },
+            "type": "array"
+          },
+          "journeys": {
+            "items": {
+              "$ref": "#/components/schemas/JourneyResult"
+            },
+            "type": "array"
+          },
+          "nights": {
+            "items": {
+              "$ref": "#/components/schemas/Night"
+            },
+            "type": "array"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/TripTotals"
+          },
+          "tripId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tripId",
+          "days",
+          "nights",
+          "journeys",
+          "expenses",
+          "totals"
+        ],
+        "type": "object"
+      },
+      "TripTotals": {
+        "additionalProperties": false,
+        "properties": {
+          "byCostType": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "companyPaid": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "expenses": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "lodgingAllowance": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "meals": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "mileage": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "meals",
+          "lodgingAllowance",
+          "mileage",
+          "expenses",
+          "byCostType",
+          "companyPaid",
+          "total"
+        ],
+        "type": "object"
+      },
+      "User": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "admin": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "string"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "hasPassword": {
+            "type": "boolean"
+          },
+          "iban": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "localAdmin": {
+            "type": "boolean"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "oidcLinked": {
+            "type": "boolean"
+          },
+          "theme": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "name",
+          "email",
+          "admin",
+          "localAdmin",
+          "active",
+          "locale",
+          "theme",
+          "employeeNumber",
+          "address",
+          "iban",
+          "oidcLinked",
+          "hasPassword"
+        ],
+        "type": "object"
+      },
+      "VATPortion": {
+        "additionalProperties": false,
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "grossMinor": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "rateBp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "statedNet": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "statedVat": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "grossMinor",
+          "rateBp"
+        ],
+        "type": "object"
+      },
+      "VATResult": {
+        "additionalProperties": false,
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "gross": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "net": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "rateBp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "vat": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rateBp",
+          "country",
+          "gross",
+          "net",
+          "vat"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "session": {
+        "in": "cookie",
+        "name": "spesen_session",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "Travel and out-of-pocket expense claims.",
+    "title": "Spesen API",
+    "version": "dev"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/admin/users": {
+      "get": {
+        "operationId": "listUsers",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccountSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "admin"
+        ]
+      },
+      "post": {
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/users/{id}/active": {
+      "post": {
+        "operationId": "setUserActive",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActiveBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/advances": {
+      "get": {
+        "operationId": "listAdvances",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Advance"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      },
+      "post": {
+        "operationId": "createAdvance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvanceInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Advance"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/api/advances/{id}": {
+      "delete": {
+        "operationId": "deleteAdvance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/api/audit": {
+      "get": {
+        "operationId": "listAudit",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "format": "int64",
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntry"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Own audit trail",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/claims": {
+      "get": {
+        "operationId": "listClaims",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Claim"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      },
+      "post": {
+        "operationId": "createClaim",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}": {
+      "delete": {
+        "operationId": "deleteClaim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      },
+      "get": {
+        "operationId": "getClaim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preview"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Claim with preview, blockers, warnings and suggestions",
+        "tags": [
+          "claims"
+        ]
+      },
+      "put": {
+        "operationId": "updateClaim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/items": {
+      "post": {
+        "operationId": "setClaimItem",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimItemBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Add or remove a trip, outlay or advance",
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/paid": {
+      "post": {
+        "operationId": "markClaimPaid",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/submit": {
+      "post": {
+        "operationId": "submitClaim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/unlock": {
+      "post": {
+        "operationId": "unlockClaim",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/unpaid": {
+      "post": {
+        "operationId": "undoClaimPaid",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Claim"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/versions/{version}/pdf": {
+      "get": {
+        "operationId": "downloadClaimPdf",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "contentEncoding": "base64",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/claims/{id}/versions/{version}/zip": {
+      "get": {
+        "operationId": "downloadClaimZip",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "contentEncoding": "base64",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "claims"
+        ]
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "operationId": "getDashboard",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dashboard"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "overview"
+        ]
+      }
+    },
+    "/api/employer": {
+      "get": {
+        "operationId": "getEmployer",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerOut"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "profile"
+        ]
+      },
+      "put": {
+        "operationId": "saveEmployer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployerInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employer"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/expenses": {
+      "post": {
+        "operationId": "createExpense",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expense"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/api/expenses/{id}": {
+      "delete": {
+        "operationId": "deleteExpense",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      },
+      "get": {
+        "operationId": "getExpense",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expense"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      },
+      "put": {
+        "operationId": "updateExpense",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expense"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/api/locations": {
+      "get": {
+        "operationId": "listLocations",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "format": "int64",
+              "maximum": 2100,
+              "minimum": 2000,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LocationOption"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Rate locations for a year",
+        "tags": [
+          "rates"
+        ]
+      }
+    },
+    "/api/login": {
+      "post": {
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Password login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "End the session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/me": {
+      "get": {
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "profile"
+        ]
+      },
+      "put": {
+        "operationId": "updateMe",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/me/password": {
+      "post": {
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/outlays": {
+      "get": {
+        "operationId": "listOutlays",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OutlayListItem"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Standalone outlays",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/api/receipts": {
+      "get": {
+        "operationId": "listReceipts",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "enum": [
+                "inbox",
+                "confirmed",
+                "void",
+                ""
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Receipt"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "receipts"
+        ]
+      },
+      "post": {
+        "operationId": "uploadReceipt",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "filename",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "note",
+            "schema": {
+              "maxLength": 500,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "contentMediaType": "application/octet-stream",
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Upload an original receipt (JPEG, PNG or PDF) into the inbox",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/self-issued": {
+      "post": {
+        "operationId": "createSelfIssued",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SelfIssued"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Create an Eigenbeleg",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/{id}": {
+      "delete": {
+        "operationId": "deleteReceipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Delete an unconfirmed upload",
+        "tags": [
+          "receipts"
+        ]
+      },
+      "get": {
+        "operationId": "getReceipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/{id}/confirm": {
+      "post": {
+        "operationId": "confirmReceipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Confirm after visual check; assigns the receipt number",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/{id}/file": {
+      "get": {
+        "operationId": "getReceiptFile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "contentEncoding": "base64",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Original bytes",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/{id}/preview": {
+      "get": {
+        "operationId": "getReceiptPreview",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "contentEncoding": "base64",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "PNG preview of the first page",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/receipts/{id}/void": {
+      "post": {
+        "operationId": "voidReceipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/session": {
+      "get": {
+        "operationId": "getSession",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Current session and login options",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/setup": {
+      "post": {
+        "operationId": "setup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetupBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Create the first administrator (single use)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/trips": {
+      "get": {
+        "operationId": "listTrips",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TripListItem"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "trips"
+        ]
+      },
+      "post": {
+        "operationId": "createTrip",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripDetail"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "trips"
+        ]
+      }
+    },
+    "/api/trips/{id}": {
+      "delete": {
+        "operationId": "deleteTrip",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "trips"
+        ]
+      },
+      "get": {
+        "operationId": "getTrip",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "trips"
+        ]
+      },
+      "put": {
+        "operationId": "updateTrip",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "tags": [
+          "trips"
+        ]
+      }
+    }
+  }
+}

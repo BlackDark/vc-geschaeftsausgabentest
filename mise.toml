@@ -1,0 +1,29 @@
+# Tool versions for development and CI (install with `mise install`).
+# pnpm stays on 10.28.0, the version that wrote web/pnpm-lock.yaml.
+[tools]
+go = "1.27.2"
+node = "24.22.0"
+pnpm = "10.28.0"
+typst = "0.15.1"
+
+[tasks.check]
+description = "Go and web checks"
+run = [
+  "test -z \"$(gofmt -l cmd internal web data)\"",
+  "go vet ./...",
+  "go test ./...",
+  "pnpm --dir web check",
+]
+
+[tasks.gen]
+description = "Regenerate the OpenAPI document and the TypeScript client"
+run = ["go run ./cmd/spesen openapi > web/openapi.json", "pnpm --dir web gen"]
+
+[tasks.build]
+description = "Build the SPA and the server binary"
+run = ["pnpm --dir web build", "CGO_ENABLED=0 go build -o bin/spesen ./cmd/spesen"]
+
+[tasks.dev]
+description = "Run the server with a local data directory (use `pnpm --dir web dev` for the UI)"
+env = { SPESEN_DATA_DIR = "data-dev", SPESEN_SETUP_TOKEN = "dev-setup-token" }
+run = "go run ./cmd/spesen"
