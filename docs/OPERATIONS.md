@@ -89,6 +89,13 @@ The import validates header, year, country mapping, unique keys and amounts and 
 row. It creates a new revision; submitted claims keep the rates frozen in their snapshot.
 Domestic rates for a new year are seeded in `internal/rates` (they rarely change).
 
+## Releases
+
+Run *Actions → Release → Run workflow* on `main` with a version such as `0.2.0` (or push a tag
+`v0.2.0`). The workflow runs CI, creates the tag, pushes the image to
+`ghcr.io/blackdark/vc-geschaeftsausgabentest` with the tags `0.2.0`, `0.2` and `latest`, and
+creates the GitHub release with generated notes.
+
 ## Health
 
 `GET /healthz` returns `ok` when the database is reachable (no secrets). The image's
