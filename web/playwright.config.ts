@@ -18,8 +18,18 @@ export default defineConfig({
     launchOptions: { executablePath },
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"], locale: "de-DE", launchOptions: { executablePath } } },
-    { name: "mobile", use: { ...devices["Pixel 7"], locale: "de-DE", launchOptions: { executablePath } }, testMatch: /mobile\.spec\.ts/ },
+    {
+      name: "desktop",
+      use: { ...devices["Desktop Chrome"], locale: "de-DE", launchOptions: { executablePath } },
+      testIgnore: /mobile\.spec\.ts/,
+    },
+    {
+      name: "mobile",
+      // 360 px is the narrowest supported width (P19).
+      use: { ...devices["Pixel 7"], viewport: { width: 360, height: 780 }, locale: "de-DE", launchOptions: { executablePath } },
+      testMatch: /mobile\.spec\.ts/,
+      dependencies: ["desktop"],
+    },
   ],
   webServer: {
     command: `sh e2e/serve.sh ${port}`,

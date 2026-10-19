@@ -31,6 +31,24 @@ The project is now the owner's own tool, not an agent-comparison experiment. The
 | License | AGPL-3.0-only. |
 | Delivery | Docker Compose on the owner's server; image on GHCR (amd64 and arm64). |
 
+## Implementation decisions 2026-10-19
+
+Ordinary implementation choices made without changing scope or financial results.
+
+| Topic | Decision |
+| --- | --- |
+| Name | The application is called "Spesen"; binary `spesen`, image `ghcr.io/blackdark/vc-geschaeftsausgabentest`. |
+| Numbers | Receipts `B-<year>-<0001>` per user and confirmation year; claims `A-<year>-<001>` per user, employer and year of first submission. Allocated inside the committing transaction, so failed attempts consume nothing. |
+| Submission | One SQLite write transaction covers the final daily-allocation check, number allocation, artifact publication and status change. SQLite runs with a single connection, which serializes submissions. Files are staged, checksummed and moved into storage before the commit and removed if it fails; startup deletes exports no version references. |
+| Revision check | The preview returns a revision hash of the claim's inputs and results; submission is refused when it changed (warnings are acknowledged for exactly what was shown). |
+| Nights | Each night of a multi-day trip needs an explicit arrangement; an unset night is a blocker. A two-date trip with "no overnight stay" is treated as one-day travel (C05). |
+| Daily cap | The daily entitlement is computed per user across all trips; a locked trip keeps the amount frozen in its claim (`frozen_days`), and only the remainder goes to the editable trip ending latest. |
+| Hotel breakfast | A lodging invoice marked "breakfast included" sets a provided breakfast on the following day once (origin recorded, editable, audited). |
+| Receipt validation | Uploads are detected by content and then rendered by Typst; a file Typst cannot read is rejected. The rendered PNG is the preview (no EXIF). |
+| PDF | Inter font (OFL) bundled; summary, per-trip calculation, notes, sources, confirmation lines, receipt index and every receipt page. |
+| Generated code | Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0 lacks the compiler API; the app itself is type-checked with TypeScript 7. |
+| pnpm | 10.28.0, the version that wrote the lockfile; pnpm 12 was not verified. |
+
 ## Inherited product decisions retained
 
 Employer reimbursement is the primary use case. Users own separate records, even when an admin shares the instance. Employers are separate per-user objects. The original restriction to personally paid, trip-bound expenses is superseded: record the payer explicitly and support standalone outlays. Claims are versioned documents with locking, reasoned unlocking and advances. German/English UI, date-based rate tables, explicit VAT portions and documented FX remain part of the product. Go/SQLite in one application container and Svelte/Vite remain the stack.

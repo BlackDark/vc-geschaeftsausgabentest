@@ -1,26 +1,77 @@
-# Reise2: implementation brief
+<div align="center">
 
-This directory is a standalone starting point for a new travel and out-of-pocket reimbursement application. Nothing is implemented. Build from the requirements here; the previous application's code, schema, API, UI and release history are not the specification.
+<h1>Spesen: self-hosted travel expense and reimbursement claims</h1>
 
-The purpose is to compare agents implementing the same useful product with the same scope. Documentation and filenames are English. German domain terms remain available in the glossary. The application itself supports German and English.
+**Self-hosted app for German business travel expenses (Reisekostenabrechnung) and out-of-pocket outlays, built for an employed managing director.**<br>
+Record trips, receipts and purchases on your phone, let it calculate meal and lodging allowances and mileage, and submit one clean PDF to your employer.<br>
+One small container, SQLite, no cloud, login with password or Pocket ID.
 
-## Reading order
+[![CI](https://github.com/BlackDark/vc-geschaeftsausgabentest/actions/workflows/ci.yml/badge.svg)](https://github.com/BlackDark/vc-geschaeftsausgabentest/actions/workflows/ci.yml)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 
-1. [Product specification](docs/SPECIFICATION.md): required behavior and scope.
-2. [Glossary](GLOSSARY.md): shared domain language.
-3. [Calculation rules](docs/CALCULATION_RULES.md): arithmetic and tax-related behavior.
-4. [Architecture](docs/ARCHITECTURE.md): retained stack and technical constraints.
-5. [Acceptance scenarios](docs/ACCEPTANCE.md): observable completion criteria.
-6. [Decisions and provenance](docs/DECISIONS.md): assumptions, deliberate reductions and unresolved questions.
+</div>
 
-The agreed scope is the **Core** in the specification, including password, OIDC and trusted-proxy login. The owner confirmed this scope on 2026-10-18. Subsequent stages are **S3 → mail import → AI receipt reading**, in that order. The owner also accepted preserving originals, PDF+ZIP for Core, a small shared fixture set and a mandatory first working flow. Use one interface while keeping each user’s data separate. Core includes standalone outlays and company-paid travel costs; the claim combines travel reimbursement and other outlays. The export prepares a payout; bank integration is outside scope.
+## 💡 Why Spesen?
 
-The inherited foreign-rate CSVs are included in [data/](data/README.md). Three small synthetic scenarios in [fixtures/core-cases.json](fixtures/core-cases.json) define common comparison inputs. Implement the first working flow in docs/ACCEPTANCE.md before expanding to all Core scenarios.
+Spreadsheets and paper forms get the per-diem rules wrong (8-hour threshold, arrival days, provided breakfast, foreign rates) and lose receipts.
 
-## Starting an agent run
+- **Correct allowances**: German meal allowances incl. meal deductions, foreign rates 2024–2026, lodging actual cost vs. allowance, mileage; every line shows its rule ID and rate source.
+- **Receipts that stay original**: photo or PDF upload, visual check, permanent receipt numbers, SHA-256 checksums, duplicate detection.
+- **One readable PDF**: summary, per-day calculation and all receipt pages in one document, plus a ZIP with originals, CSV and JSON for the employer.
+- **Corrections without losing history**: submitted claims are frozen; unlocking with a reason creates a new version, the old PDF stays byte-identical.
 
-Give each agent a separate copy of this directory and the same prompt:
+Runs on any Linux server (amd64/arm64) behind a reverse proxy.
 
-> Implement the Core described in README.md and its linked documents from an empty application. Follow AGENTS.md. Preserve the chosen stack, implement in working vertical slices, and verify against docs/ACCEPTANCE.md. Record material assumptions and provide reproducible setup and test commands. Report incomplete requirements and any tax rules or rate data that remain unverified. Extensions are optional only after the Core passes.
+## 🚀 Install
 
-Use the same brief revision, tool access and time budget for comparable runs. Record those conditions externally, so one agent's decisions do not become another agent's starting point.
+```bash
+mkdir spesen && cd spesen
+curl -O https://raw.githubusercontent.com/BlackDark/vc-geschaeftsausgabentest/main/compose.yaml
+mkdir secrets && openssl rand -hex 24 > secrets/setup_token
+# edit SPESEN_BASE_URL in compose.yaml, then:
+docker compose up -d
+```
+
+Open the URL, enter the setup token and create your account. Configuration, Pocket ID, backup and restore: [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
+## ✨ Features
+
+- Trips with departure/return times, stops abroad, provided meals, contributions, lodging per night and private-car journeys
+- Company-paid costs documented with zero payout; hotel breakfast suggested as provided meal
+- Standalone outlays (tools, software) in the same claim as travel
+- Receipt inbox with mobile camera capture, multipage PDFs and self-issued receipts (Eigenbeleg)
+- Quarterly/monthly/custom claims with advances, blockers and warnings, versioned submission, payment tracking
+- German and English UI, light/dark theme, usable from 360 px
+- Password and OIDC login (Pocket ID), per-user data isolation, audit trail
+
+## 📚 Documentation
+
+- [Operations](docs/OPERATIONS.md): configuration, Pocket ID, backup/restore, rate import
+- [Status](docs/STATUS.md): acceptance coverage, open gaps and unverified rules
+- [Calculation rules](docs/CALCULATION_RULES.md), [Decisions](docs/DECISIONS.md), [Architecture](docs/ARCHITECTURE.md), [Original brief](docs/BRIEF.md)
+
+## 🛠️ Development
+
+Tools come from [`mise.toml`](mise.toml) (Go, Node, pnpm, Typst):
+
+```bash
+mise install
+pnpm --dir web install
+mise run check        # gofmt, go vet, go test, Biome, tsc, Vitest
+mise run dev          # API on :8080 (setup token: dev-setup-token)
+pnpm --dir web dev    # UI on :5173 with proxy to :8080
+mise run gen          # after API changes: OpenAPI + TypeScript client
+mise run build        # SPA + single binary in bin/spesen
+SPESEN_BIN=$PWD/bin/spesen pnpm --dir web e2e   # Playwright
+docker build -f docker/Dockerfile .
+```
+
+---
+
+<div align="center">
+
+<sub>License: <a href="LICENSE">AGPL-3.0</a> · © BlackDark and contributors<br>
+Changed versions you pass on or run for others must offer their source code under the AGPL.<br>
+Not tax advice. Rates are provided as data with their sources; the employer decides on the payroll tax treatment.</sub>
+
+</div>

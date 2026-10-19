@@ -4,6 +4,7 @@
 //	spesen openapi                      print the OpenAPI document
 //	spesen import-rates YEAR FILE SRC   import a further year's foreign rates
 //	spesen backup DIR                   write a consistent backup to DIR
+//	spesen verify                       check checksums of receipts and exports
 package main
 
 import (
@@ -46,6 +47,8 @@ func main() {
 		err = importRates(os.Args[2:])
 	case "backup":
 		err = backup(os.Args[2:])
+	case "verify":
+		err = verify()
 	case "healthcheck":
 		err = healthcheck()
 	case "version", "--version":
@@ -195,17 +198,42 @@ func backup(args []string) error {
 		return err
 	}
 	defer conn.Close()
-	// Files are written before the rows that reference them, so copying the
-	// database first and the files second yields a consistent set.
-	if _, err := conn.ExecContext(ctx, `VACUUM INTO ?`, filepath.Join(dest, "spesen.db")); err != nil {
+	if err := app.Backup(ctx, conn, cfg.DataDir, dest); err != nil {
 		return err
 	}
-	for _, area := range []string{"files", "exports"} {
-		if err := copyTree(filepath.Join(cfg.DataDir, area), filepath.Join(dest, area)); err != nil {
-			return err
-		}
-	}
 	fmt.Println("backup written to", dest)
+	return nil
+}
+
+// verify checks every stored original and export against its recorded
+// SHA-256; run it after a restore.
+func verify() error {
+	cfg, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+	ctx := context.Background()
+	conn, err := db.Open(ctx, filepath.Join(cfg.DataDir, "spesen.db"))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	files, err := app.NewFiles(cfg.DataDir)
+	if err != nil {
+		return err
+	}
+	r, err := (&app.App{DB: conn, Files: files}).Verify(ctx)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("checked %d receipt originals and %d export files\n", r.Receipts, r.Exports)
+	for _, p := range r.Problems {
+		fmt.Println("PROBLEM:", p)
+	}
+	if len(r.Problems) > 0 {
+		return fmt.Errorf("%d problems found", len(r.Problems))
+	}
+	fmt.Println("all checksums match")
 	return nil
 }
 

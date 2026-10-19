@@ -183,6 +183,33 @@ func TestF01FirstWorkingFlow(t *testing.T) {
 		t.Log(err)
 	}
 
+	// A27: backup, restore into a clean location and verify by checksum.
+	restored := filepath.Join(t.TempDir(), "restore")
+	if err := Backup(ctx, a.DB, a.Cfg.DataDir, restored); err != nil {
+		t.Fatal(err)
+	}
+	conn2, err := db.Open(ctx, filepath.Join(restored, "spesen.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn2.Close()
+	rep := must((&App{DB: conn2, Files: must(NewFiles(restored))}).Verify(ctx))
+	if len(rep.Problems) != 0 || rep.Receipts != 3 || rep.Exports != 4 {
+		t.Fatalf("restore verify: %+v", rep)
+	}
+	var restoredPayout int64
+	if err := conn2.QueryRow(`SELECT payout FROM claim_versions WHERE version = 2`).Scan(&restoredPayout); err != nil || restoredPayout != 19280 {
+		t.Fatalf("restored payout %d, %v", restoredPayout, err)
+	}
+	var key string
+	_ = conn2.QueryRow(`SELECT pdf_key FROM claim_versions WHERE version = 1`).Scan(&key)
+	if err := os.WriteFile(filepath.Join(restored, filepath.FromSlash(key)), []byte("tampered"), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	if rep := must((&App{DB: conn2, Files: must(NewFiles(restored))}).Verify(ctx)); len(rep.Problems) != 1 {
+		t.Fatalf("tampering not detected: %+v", rep)
+	}
+
 	// A second claim cannot reuse the outlay.
 	c2 := must(a.CreateClaim(ctx, u, ClaimInput{PeriodStart: "2026-04-01", PeriodEnd: "2026-06-30"}))
 	if len(c2.OutlayIDs) != 0 || len(c2.TripIDs) != 0 || len(c2.AdvanceIDs) != 0 {
