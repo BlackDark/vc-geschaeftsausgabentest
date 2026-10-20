@@ -1,7 +1,7 @@
 # Example deployment. TLS terminates at your reverse proxy (Traefik, Caddy …).
 services:
   spesen:
-    image: ghcr.io/blackdark/vc-geschaeftsausgabentest:latest
+    image: ghcr.io/blackdark/vc-geschaeftsausgabentest:latest@sha256:d0d88077ec02cc75f38a94b9774094339997eaa0b1cc50e521bb8f83666c04cf
     restart: unless-stopped
     read_only: true
     tmpfs:

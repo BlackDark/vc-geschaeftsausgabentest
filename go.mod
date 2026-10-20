@@ -5,7 +5,7 @@ go 1.27.2
 require (
 	github.com/alexedwards/argon2id v1.0.0
 	github.com/danielgtaylor/huma/v2 v2.39.1
-	github.com/go-jose/go-jose/v4 v4.1.4
+	github.com/go-jose/go-jose/v4 v4.1.6
 	github.com/pressly/goose/v3 v3.29.0
 	github.com/zitadel/oidc/v3 v3.51.16
 	modernc.org/sqlite v1.60.1
