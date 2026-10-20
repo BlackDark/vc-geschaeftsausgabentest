@@ -55,7 +55,10 @@ func newServer(t *testing.T, options ...func(*Config)) *testServer {
 	if err != nil {
 		t.Fatal(err)
 	}
-	cfg := Config{BaseURL: "http://example.test", SetupToken: "setup-token", PasswordEnabled: true, Version: "test"}
+	// Start the listener first so the configuration knows the real base URL
+	// (OIDC redirects back to it).
+	ts := httptest.NewUnstartedServer(nil)
+	cfg := Config{BaseURL: "http://" + ts.Listener.Addr().String(), SetupToken: "setup-token", PasswordEnabled: true, Version: "test"}
 	for _, o := range options {
 		o(&cfg)
 	}
@@ -63,7 +66,8 @@ func newServer(t *testing.T, options ...func(*Config)) *testServer {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ts := httptest.NewServer(h)
+	ts.Config.Handler = h
+	ts.Start()
 	t.Cleanup(ts.Close)
 	return &testServer{Server: ts, app: a}
 }

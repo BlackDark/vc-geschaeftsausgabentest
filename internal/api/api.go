@@ -105,7 +105,7 @@ func userFrom(ctx context.Context) *app.User {
 func New(a *app.App, cfg Config, log *slog.Logger, spa http.Handler) (http.Handler, error) {
 	s := &Server{app: a, cfg: cfg, log: log}
 	if cfg.OIDC != nil {
-		p, err := newOIDCProvider(context.Background(), cfg.OIDC, cfg.BaseURL, cfg.SecureCookies)
+		p, err := newOIDCProvider(context.Background(), cfg.OIDC, cfg.BaseURL, cfg.SecureCookies, log)
 		if err != nil {
 			return nil, err
 		}
