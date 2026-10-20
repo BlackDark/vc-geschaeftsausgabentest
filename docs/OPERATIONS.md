@@ -14,7 +14,7 @@ the variable name. Invalid combinations stop the server at startup with a list o
 | `SPESEN_BASE_URL` | `http://localhost:8080` | Public URL. `https://` enables Secure cookies and is required for the OIDC redirect. |
 | `SPESEN_DATA_DIR` | `/data` | SQLite database (`spesen.db`), originals (`files/`), exports (`exports/`). |
 | `SPESEN_LISTEN` | `:8080` | Listen address. |
-| `SPESEN_SETUP_TOKEN` | – | Token for creating the first administrator. Without it, a random token is written to `$SPESEN_DATA_DIR/setup-token` while no administrator exists. Setup is disabled once an administrator exists. |
+| `SPESEN_SETUP_TOKEN` | – | Token for creating the first administrator. Without it, a random token is written to `$SPESEN_DATA_DIR/setup-token` while no administrator exists. Setup is disabled once an administrator (local or OIDC) exists, and is never offered with `SPESEN_PASSWORD_LOGIN=false`. |
 | `SPESEN_PASSWORD_LOGIN` | `true` | Password login. Keep it as an emergency route even with OIDC. |
 | `SPESEN_OIDC_ISSUER` | – | Enables OIDC, e.g. `https://id.example.com` (Pocket ID). |
 | `SPESEN_OIDC_CLIENT_ID` / `_CLIENT_SECRET` | – | Client credentials. |
@@ -35,6 +35,10 @@ the variable name. Invalid combinations stop the server at startup with a list o
 2. Open the URL, enter the token and create your account. You land on the settings page:
    enter your employer and your details (they appear on every claim).
 3. Optional: link Pocket ID under *Settings → Sign-in* (see below).
+
+OIDC only (`SPESEN_PASSWORD_LOGIN=false`): there is no setup page. Set
+`SPESEN_OIDC_ADMIN_GROUPS` and log in with a member of that group; the group grants the admin role
+on every login.
 
 ## Pocket ID
 

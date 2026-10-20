@@ -117,10 +117,14 @@ func serve() error {
 }
 
 // ensureSetupToken writes a one-time token file when no administrator
-// exists and the operator did not supply SPESEN_SETUP_TOKEN.
+// exists, password login (which setup needs) is on and the operator did not
+// supply SPESEN_SETUP_TOKEN.
 func ensureSetupToken(ctx context.Context, a *app.App, cfg *Config, log *slog.Logger) error {
+	if !cfg.PasswordLogin || cfg.SetupToken != "" {
+		return nil
+	}
 	needs, err := a.NeedsSetup(ctx)
-	if err != nil || !needs || cfg.SetupToken != "" {
+	if err != nil || !needs {
 		return err
 	}
 	cfg.SetupToken = randomToken()

@@ -28,7 +28,8 @@ type testServer struct {
 	app *app.App
 }
 
-func newServer(t *testing.T) *testServer {
+// newServer starts a test server; options adjust the default configuration.
+func newServer(t *testing.T, options ...func(*Config)) *testServer {
 	t.Helper()
 	typst := os.Getenv("SPESEN_TYPST")
 	if typst == "" {
@@ -54,7 +55,11 @@ func newServer(t *testing.T) *testServer {
 	if err != nil {
 		t.Fatal(err)
 	}
-	h, err := New(a, Config{BaseURL: "http://example.test", SetupToken: "setup-token", PasswordEnabled: true, Version: "test"}, log, nil)
+	cfg := Config{BaseURL: "http://example.test", SetupToken: "setup-token", PasswordEnabled: true, Version: "test"}
+	for _, o := range options {
+		o(&cfg)
+	}
+	h, err := New(a, cfg, log, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,6 +155,38 @@ func seed(t *testing.T, c *client, n int) (trip, expense, receipt, claim int64) 
 		t.Fatalf("submit: %d", s)
 	}
 	return td.Trip.ID, e.ID, r.ID, cl.ID
+}
+
+// TestSetupOffer checks when the session offers setup: not without password
+// login, and not once an OIDC administrator exists.
+func TestSetupOffer(t *testing.T) {
+	needsSetup := func(s *testServer) bool {
+		t.Helper()
+		var info struct {
+			NeedsSetup bool `json:"needsSetup"`
+		}
+		if st := s.client(t).do("GET", "/api/session", nil, &info); st != 200 {
+			t.Fatalf("session: %d", st)
+		}
+		return info.NeedsSetup
+	}
+	oidcOnly := newServer(t, func(c *Config) { c.PasswordEnabled = false })
+	if needsSetup(oidcOnly) {
+		t.Error("setup offered although password login is off")
+	}
+	s := newServer(t)
+	if !needsSetup(s) {
+		t.Fatal("fresh instance with password login does not offer setup")
+	}
+	if _, err := s.app.DB.Exec(`INSERT INTO users(name, oidc_admin, oidc_issuer, oidc_subject, created_at) VALUES ('OIDC Admin', 1, 'https://id.example', 'sub-1', '2026-10-20T00:00:00Z')`); err != nil {
+		t.Fatal(err)
+	}
+	if needsSetup(s) {
+		t.Error("setup offered although an OIDC administrator exists")
+	}
+	if st := s.client(t).do("POST", "/api/setup", map[string]any{"token": "setup-token", "username": "late", "name": "Late", "password": "correct horse battery"}, nil); st != 409 {
+		t.Errorf("setup after OIDC admin: %d, want 409", st)
+	}
 }
 
 // TestA17PasswordLoginAndDeactivation covers setup, login limits, logout

@@ -12,7 +12,7 @@ import (
 // SessionInfo tells the UI how to log in and who is logged in.
 type SessionInfo struct {
 	User            *app.User `json:"user,omitempty" doc:"absent when not logged in"`
-	NeedsSetup      bool      `json:"needsSetup"`
+	NeedsSetup      bool      `json:"needsSetup" doc:"no administrator exists and password login is on, so /setup can create one"`
 	PasswordEnabled bool      `json:"passwordEnabled"`
 	OIDCEnabled     bool      `json:"oidcEnabled"`
 	OIDCLabel       string    `json:"oidcLabel"`
@@ -42,7 +42,9 @@ func (s *Server) sessionInfo(ctx context.Context, u *app.User) (SessionInfo, err
 		info.OIDCLabel = s.oidc.label
 	}
 	needs, err := s.app.NeedsSetup(ctx)
-	info.NeedsSetup = needs
+	// Setup creates a password account, so it is only offered with password
+	// login; OIDC-only instances get their admins from the admin group.
+	info.NeedsSetup = needs && s.cfg.PasswordEnabled
 	return info, err
 }
 
