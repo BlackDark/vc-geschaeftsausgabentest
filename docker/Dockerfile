@@ -2,7 +2,7 @@
 # Multi-arch build without emulation: every build step runs on the build
 # platform; only the final stage is assembled for the target platform.
 
-FROM --platform=$BUILDPLATFORM node:24.22.0-alpine AS web
+FROM --platform=$BUILDPLATFORM node:24.22.0-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS web
 WORKDIR /src/web
 RUN corepack enable
 COPY web/package.json web/pnpm-lock.yaml web/pnpm-workspace.yaml ./
