@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
       - name: Format
         run: test -z "$(gofmt -l cmd internal web data | tee /dev/stderr)"
       - run: go vet ./...
@@ -43,8 +43,8 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - name: Generated API client is up to date
@@ -59,8 +59,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
       - run: pnpm --dir web install --frozen-lockfile
       - run: pnpm --dir web build
       - run: CGO_ENABLED=0 go build -o bin/spesen ./cmd/spesen
@@ -72,7 +72,7 @@ jobs:
           SPESEN_BIN: ${{ github.workspace }}/bin/spesen
           SPESEN_TYPST: typst
       - if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report
           path: web/playwright-report
@@ -82,10 +82,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
-      - uses: docker/setup-buildx-action@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - name: Build both platforms
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: docker/Dockerfile
@@ -93,7 +93,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Load amd64 image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: docker/Dockerfile
