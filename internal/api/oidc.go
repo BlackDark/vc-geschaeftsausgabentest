@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
@@ -37,6 +38,7 @@ type oidcProvider struct {
 	secure   bool
 	label    string
 	cookies  *httphelper.CookieHandler
+	log      *slog.Logger
 
 	mu    sync.Mutex
 	party rp.RelyingParty
@@ -57,7 +59,7 @@ func randomKey(n int) []byte {
 	return b
 }
 
-func newOIDCProvider(_ context.Context, cfg *OIDCConfig, baseURL string, secure bool) (*oidcProvider, error) {
+func newOIDCProvider(_ context.Context, cfg *OIDCConfig, baseURL string, secure bool, log *slog.Logger) (*oidcProvider, error) {
 	opts := []httphelper.CookieHandlerOpt{httphelper.WithSameSite(http.SameSiteLaxMode), httphelper.WithMaxAge(600)}
 	if !secure {
 		opts = append(opts, httphelper.WithUnsecure())
@@ -72,6 +74,7 @@ func newOIDCProvider(_ context.Context, cfg *OIDCConfig, baseURL string, secure 
 		secure:   secure,
 		label:    label,
 		cookies:  httphelper.NewCookieHandler(randomKey(32), randomKey(32), opts...),
+		log:      log,
 	}, nil
 }
 
@@ -93,12 +96,25 @@ func (p *oidcProvider) relyingParty(ctx context.Context) (rp.RelyingParty, error
 			v, _ := ctx.Value(nonceCtx{}).(string)
 			return v
 		})),
+		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType, errorDesc, _ string) {
+			p.callbackFailed(w, r, errorType+": "+errorDesc)
+		}),
+		rp.WithUnauthorizedHandler(func(w http.ResponseWriter, r *http.Request, desc, _ string) {
+			p.callbackFailed(w, r, desc)
+		}),
 	)
 	if err != nil {
 		return nil, err
 	}
 	p.party = party
 	return party, nil
+}
+
+// callbackFailed sends the browser back to the login page instead of the
+// library's plain-text error (state mismatch, failed exchange or token check).
+func (p *oidcProvider) callbackFailed(w http.ResponseWriter, r *http.Request, reason string) {
+	p.log.Warn("oidc callback failed", "reason", reason)
+	http.Redirect(w, r, "/login?error=oidc.failed", http.StatusFound)
 }
 
 func (s *Server) shortCookie(name, value string, maxAge int) *http.Cookie {

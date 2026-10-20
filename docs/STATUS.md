@@ -16,7 +16,7 @@ exercised by a test. Scope reductions decided by the owner are in
 | A15 three-month limit | partial | Per-day exclusion with reason works (C11 exclusion). The screening warning needs work-location identity, which is not modelled yet. |
 | A16 foreign itineraries | partial | Multi-stop rate location and return-from-abroad rule tested. Special flight/ship/date-line schedules (C09) are not implemented; they currently use the ordinary location logic instead of blocking. |
 | A17 password login | pass | `internal/api` `TestA17…`: single-use setup token, rate limit, deactivation ends sessions, last admin protected, logout. |
-| A18 OIDC | unverified | Implemented (PKCE, state, nonce, issuer/audience/signature via zitadel/oidc, subject-based identity, group provisioning/admin, explicit linking). No mock-provider test yet. |
+| A18 OIDC | **pass** | `internal/api` `TestA18OIDC` against a mock provider (discovery, JWKS, RS256, PKCE check): refusal outside allowed groups, provisioning, admin group re-evaluated per login, explicit linking, forged nonce and foreign state rejected with a redirect to the login page. |
 | A19 trusted proxy | deferred | Owner decision 2026-10-19. |
 | A20 ownership | pass | `TestA20Ownership`: lists, details, writes, nested references, receipt files, exports and audit for another user and an admin. |
 | A21 receipts | partial | Content-type detection, Typst-based validation and previews, SHA-256 duplicates per user, permanent numbers, camera capture at 360 px (`mobile.spec.ts`). Multipage PDF and oversized/encrypted upload have no automated test (manually checked: Typst reports page counts). |
