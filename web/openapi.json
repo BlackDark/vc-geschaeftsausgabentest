@@ -1862,6 +1862,7 @@
         "additionalProperties": false,
         "properties": {
           "needsSetup": {
+            "description": "no administrator exists and password login is on, so /setup can create one",
             "type": "boolean"
           },
           "oidcEnabled": {

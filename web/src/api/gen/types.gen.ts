@@ -521,6 +521,9 @@ export type SelfIssued = {
 };
 
 export type SessionInfo = {
+    /**
+     * no administrator exists and password login is on, so /setup can create one
+     */
     needsSetup: boolean;
     oidcEnabled: boolean;
     oidcLabel: string;

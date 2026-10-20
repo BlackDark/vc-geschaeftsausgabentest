@@ -22,7 +22,7 @@ export const Route = createFileRoute("/login")({
   beforeLoad: async ({ context }) => {
     const s = await context.queryClient.ensureQueryData(sessionQuery);
     if (s.user) throw redirect({ to: "/" });
-    if (s.needsSetup && s.passwordEnabled) throw redirect({ to: "/setup" });
+    if (s.needsSetup) throw redirect({ to: "/setup" });
   },
   component: Login,
 });

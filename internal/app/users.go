@@ -52,10 +52,14 @@ func (a *App) UserByID(ctx context.Context, id int64) (*User, error) {
 	return scanUser(a.DB.QueryRowContext(ctx, `SELECT `+userCols+` FROM users u WHERE u.id = ?`, id))
 }
 
+// countAdmins counts local and OIDC administrators: either kind means setup
+// is done, so an OIDC-only instance does not keep offering it.
+const countAdmins = `SELECT count(*) FROM users WHERE is_admin = 1 OR oidc_admin = 1`
+
 // NeedsSetup reports whether no administrator exists yet.
 func (a *App) NeedsSetup(ctx context.Context) (bool, error) {
 	var n int
-	err := a.DB.QueryRowContext(ctx, `SELECT count(*) FROM users WHERE is_admin = 1`).Scan(&n)
+	err := a.DB.QueryRowContext(ctx, countAdmins).Scan(&n)
 	return n == 0, err
 }
 
@@ -80,7 +84,7 @@ func (a *App) Setup(ctx context.Context, token, wantToken, username, name, passw
 	var id int64
 	err := a.tx(ctx, func(tx *sql.Tx) error {
 		var n int
-		if err := tx.QueryRowContext(ctx, `SELECT count(*) FROM users WHERE is_admin = 1`).Scan(&n); err != nil {
+		if err := tx.QueryRowContext(ctx, countAdmins).Scan(&n); err != nil {
 			return err
 		}
 		if n > 0 {
