@@ -3,7 +3,7 @@
 [tools]
 go = "1.27.3"
 node = "24.22.0"
-pnpm = "12.14.0"
+pnpm = "12.15.0"
 typst = "0.15.1"
 
 [tasks.check]
