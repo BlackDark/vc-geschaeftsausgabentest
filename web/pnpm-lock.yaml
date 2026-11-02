@@ -207,11 +207,11 @@ importers:
         specifier: 2.5.15
         version: 2.5.15
       '@inlang/paraglide-js':
-        specifier: 2.29.1
-        version: 2.29.1(typescript@7.0.2)(vite@8.3.5(@types/node@24.19.2)(jiti@2.7.0))
+        specifier: 2.29.3
+        version: 2.29.3(typescript@7.0.2)(vite@8.3.5(@types/node@24.19.2)(jiti@2.7.0))
       '@inlang/plugin-message-format':
-        specifier: 4.5.5
-        version: 4.5.5
+        specifier: 4.5.6
+        version: 4.5.6
       '@playwright/test':
         specifier: 1.64.1
         version: 1.64.1
@@ -534,8 +534,8 @@ packages:
   '@hey-api/types@0.1.4':
     resolution: {integrity: sha512-thWfawrDIP7wSI9ioT13I5soaaqB5vAPIiZmgD8PbeEVKNrkonc0N/Sjj97ezl7oQgusZmaNphGdMKipPO6IBg==}
 
-  '@inlang/paraglide-js@2.29.1':
-    resolution: {integrity: sha512-rE1AH0Uc86WEb+0HUKAdrfOfu1aqpGkvHebEK3PEIFYC2VJj0asF2BI8QYKSalNHTqrctsrImm647NBBg2QzSw==}
+  '@inlang/paraglide-js@2.29.3':
+    resolution: {integrity: sha512-aI9gT7zGTpr/l8tZM7OXHrgGruZ6jcu2iIqIw8QXKOGOY4akF3u1cIK6EBsttBm+DHI0FGiwCl8xVUjz7kDZHg==}
     hasBin: true
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
@@ -549,14 +549,18 @@ packages:
       vite:
         optional: true
 
-  '@inlang/plugin-message-format@4.5.5':
-    resolution: {integrity: sha512-wFA0x9isGySoim2JUP2NNMslLnYrYQESbWfhv8qJueRH+d3c6iHkkQJxMF3D7PZ9BafEaj6fw0HJhoTa5c2EMw==}
+  '@inlang/plugin-message-format@4.5.6':
+    resolution: {integrity: sha512-6ORzOI5D2vER/r/sK/G5EDkCgpvIKBTJeJQ0wHQ86otQiJnr2WeulbiYBMz3D5oz7CYb1QSvtfK0Lxjprx4wqw==}
 
   '@inlang/recommend-sherlock@0.2.1':
     resolution: {integrity: sha512-ckv8HvHy/iTqaVAEKrr+gnl+p3XFNwe5D2+6w6wJk2ORV2XkcRkKOJ/XsTUJbPSiyi4PI+p+T3bqbmNx/rDUlg==}
 
   '@inlang/sdk@4.0.4':
     resolution: {integrity: sha512-OJhVSGJa/Ak52WncgqIPHr9TyVJ1DuoublcmtNo9H8apoVn4Dr1DJNxUxawCCc01QmMSg8qoY8GrTV8SVIu1lg==}
+    engines: {node: '>=20.0.0'}
+
+  '@inlang/sdk@4.1.0':
+    resolution: {integrity: sha512-pPlaxyemcFMBcwBx31zbSNWwKORSLc2yv93v0uGCh4QgNh/kBRuLlBxbubmME6UJFsj+5nbao2WDZjz3Fzs+FA==}
     engines: {node: '>=20.0.0'}
 
   '@jridgewell/gen-mapping@0.3.13':
@@ -2259,7 +2263,7 @@ snapshots:
 
   '@hey-api/types@0.1.4': {}
 
-  '@inlang/paraglide-js@2.29.1(typescript@7.0.2)(vite@8.3.5(@types/node@24.19.2)(jiti@2.7.0))':
+  '@inlang/paraglide-js@2.29.3(typescript@7.0.2)(vite@8.3.5(@types/node@24.19.2)(jiti@2.7.0))':
     dependencies:
       '@inlang/recommend-sherlock': 0.2.1
       '@inlang/sdk': 4.0.4
@@ -2275,9 +2279,9 @@ snapshots:
       typescript: 7.0.2
       vite: 8.3.5(@types/node@24.19.2)(jiti@2.7.0)
 
-  '@inlang/plugin-message-format@4.5.5':
+  '@inlang/plugin-message-format@4.5.6':
     dependencies:
-      '@inlang/sdk': 4.0.4
+      '@inlang/sdk': 4.1.0
       '@sinclair/typebox': 0.31.30
 
   '@inlang/recommend-sherlock@0.2.1':
@@ -2285,6 +2289,13 @@ snapshots:
       comment-json: 4.6.2
 
   '@inlang/sdk@4.0.4':
+    dependencies:
+      '@lix-js/sdk': 0.20.1
+      '@sinclair/typebox': 0.31.30
+      kysely: 0.28.18
+      uuid: 14.0.3
+
+  '@inlang/sdk@4.1.0':
     dependencies:
       '@lix-js/sdk': 0.20.1
       '@sinclair/typebox': 0.31.30
