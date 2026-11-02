@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@inlang/paraglide-js": "2.29.1",
-    "@inlang/plugin-message-format": "4.5.5",
+    "@inlang/paraglide-js": "2.29.3",
+    "@inlang/plugin-message-format": "4.5.6",
     "@playwright/test": "1.64.1",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/router-plugin": "1.168.48",
