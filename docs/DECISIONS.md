@@ -18,13 +18,13 @@ The project is now the owner's own tool, not an agent-comparison experiment. The
 
 | Topic | Decision |
 | --- | --- |
-| Purpose | Personal tool for one employed managing director. The data model stays multi-user capable (ownership checks remain), but the UI optimizes for a single user. |
-| Stack | Go backend with Huma (code-first OpenAPI) and Hey API for the TypeScript client; React + TanStack Router/Query + shadcn/ui + Tailwind 4 SPA; SQLite with goose; Typst CLI for PDFs. Compared against Bun + TanStack Start, Rust + axum and Go + tygo; Go keeps the image (~60–80 MB) and memory small, Huma removes the hand-written spec. |
-| Employers | One employer profile per user in the UI (P03 reduced). The schema keeps an employer table so a second employer can be added later without migration of claims. |
+| Purpose | Personal tool for one employed managing director; single-user UI on a multi-user-capable model, see [ADR 0004](adr/0004-multi-user-model-single-user-ui.md). |
+| Stack | Go backend with Huma (code-first OpenAPI) and Hey API for the TypeScript client; React + TanStack Router/Query + shadcn/ui + Tailwind 4 SPA; SQLite with goose; Typst CLI for PDFs. Backend and client generation: [ADR 0001](adr/0001-go-huma-hey-api-stack.md). |
+| Employers | One employer profile per user in the UI (P03 reduced); see [ADR 0004](adr/0004-multi-user-model-single-user-ui.md). |
 | Login | Password and OIDC (Pocket ID). Trusted-proxy header login (A19) is deferred. The password login stays as an emergency route when the identity provider is unavailable. |
 | FX | Manual rate or actual EUR debit only. Automatic ECB lookup is deferred. |
 | Rate tables | Inherited 2024–2026 CSVs are seeded; a further year is imported through a validated CLI command instead of an admin UI. Admin draft overrides remain. |
-| Export | One PDF containing the summary, calculation details and all receipt pages (numbered), plus the ZIP with originals, JSON/CSV and a SHA-256 manifest. This supersedes the "PDF may refer to evidence in the ZIP" reduction. |
+| Export | See [ADR 0005](adr/0005-export-pdf-with-all-receipt-pages-and-zip.md); supersedes the "PDF may refer to evidence in the ZIP" reduction. |
 | Capture | Mobile camera capture and desktop upload are equally important. |
 | Trip types | Domestic multi-day, foreign, one-day and private-car mileage are all needed. |
 | Priorities | Ease of use and a well-structured, readable PDF are the owner's main quality goals. |
@@ -39,10 +39,10 @@ Ordinary implementation choices made without changing scope or financial results
 | --- | --- |
 | Name | The application is called "Spesen"; binary `spesen`, image `ghcr.io/blackdark/vc-geschaeftsausgabentest`. |
 | Numbers | Receipts `B-<year>-<0001>` per user and confirmation year; claims `A-<year>-<001>` per user, employer and year of first submission. Allocated inside the committing transaction, so failed attempts consume nothing. |
-| Submission | One SQLite write transaction covers the final daily-allocation check, number allocation, artifact publication and status change. SQLite runs with a single connection, which serializes submissions. Files are staged, checksummed and moved into storage before the commit and removed if it fails; startup deletes exports no version references. |
+| Submission | See [ADR 0002](adr/0002-single-connection-sqlite-transactional-submission.md). |
 | Revision check | The preview returns a revision hash of the claim's inputs and results; submission is refused when it changed (warnings are acknowledged for exactly what was shown). |
 | Nights | Each night of a multi-day trip needs an explicit arrangement; an unset night is a blocker. A two-date trip with "no overnight stay" is treated as one-day travel (C05). |
-| Daily cap | The daily entitlement is computed per user across all trips; a locked trip keeps the amount frozen in its claim (`frozen_days`), and only the remainder goes to the editable trip ending latest. |
+| Daily cap | See [ADR 0006](adr/0006-one-meal-allowance-per-calendar-day.md). |
 | Hotel breakfast | A lodging invoice marked "breakfast included" sets a provided breakfast on the following day once (origin recorded, editable, audited). |
 | Receipt validation | Uploads are detected by content and then rendered by Typst; a file Typst cannot read is rejected. The rendered PNG is the preview (no EXIF). |
 | PDF | Inter font (OFL) bundled; summary, per-trip calculation, notes, sources, confirmation lines, receipt index and every receipt page. |
@@ -69,12 +69,12 @@ These decisions combine the owner-confirmed scope above with explicit working de
 
 | Topic | Baseline and reason |
 | --- | --- |
-| Receipt evidence | Keep original uploaded files indefinitely; previews/export images are derivatives. This removes irreversible image processing from the critical path. It costs more storage. |
+| Receipt evidence | See [ADR 0003](adr/0003-keep-original-receipt-files.md). |
 | Compression | JPEG/PNG derivatives with visual checks; no mandatory AVIF/WebP encoder or automated cleanup. The source benchmark used one receipt fixture plus an upscaled version and reported AVIF at 4.4 s per receipt/112 s per A4 page; WebP was 3.6/105 s. This was not independently reproduced and does not establish performance of other encoders. |
 | Export | Core PDF summary plus complete evidence ZIP. PDF/A-3b, embedded originals and appended visible receipt pages are extensions. The owner accepted this reduced export requirement. Retain Typst. |
 | Retention | No deletion workflow for confirmed evidence/submitted versions in the experiment. Legal production retention/deletion policy needs separate review; indefinite test retention is not a production GDPR policy. |
 | Accounting | Preserve/report VAT data and evidence flags; defer automatic input-tax eligibility and hospitality deductibility claims. Reimbursement and employer tax accounting are distinct. |
-| Calendar-day cap | One meal allowance per user/day across employers, with no configuration switch allowing duplicates. The old brief listed owner confirmation as pending. Use this conservative baseline; validate complicated cross-employer allocation before production. |
+| Calendar-day cap | See [ADR 0006](adr/0006-one-meal-allowance-per-calendar-day.md). The old brief listed owner confirmation as pending. |
 | Difficult itineraries | Confirmed manual day schedules for special flight/ship/date-line cases are acceptable. Block unresolved schedules. Ordinary foreign travel remains Core. |
 | Three-month limit | A visible screening warning and explicit exclusion/assessment, not a complete automated eligibility engine. |
 | Domain names | English code/API terminology mapped to German specialist terms in GLOSSARY.md. This replaces the previous mandatory German identifier convention. |
@@ -96,7 +96,7 @@ Source root: `/Users/marbaced/projects/vc-reisekostenabrechnung`. This path docu
 
 | Source group | Role in this brief |
 | --- | --- |
-| `docs/SPEC.md`, `GLOSSARY.md`, `docs/adr/0001` through `0005` | Domain, original scope, business rules and explicit architecture decisions. ADR 0005 remains a proposed image strategy in the source. |
+| Source repository's `docs/SPEC.md`, `GLOSSARY.md` and its `docs/adr/0001` through `0005` (not this repository's `docs/adr/`) | Domain, original scope, business rules and explicit architecture decisions. Source ADR 0005 remains a proposed image strategy. |
 | `README.md`, `docs/features.md`, `docs/README.md`, `docs/roadmap.md`, `docs/MILESTONES.md` | Intended user journey, later scope and historical status. Completed milestones/releases were discarded as implementation evidence. |
 | `docs/authentication.md`, `docs/configuration.md`, `docs/installation.md`, `docs/development.md` | Authentication and deployment constraints; old endpoint paths, environment-variable inventories and patch pins were not copied as requirements. |
 | `docs/operations.md`, `docs/betrieb.md`, `docs/verfahrensdokumentation.md` | Evidence preservation, backup/restore and operational policy. Conflicting retention/processing claims were replaced by explicit experiment defaults. |
