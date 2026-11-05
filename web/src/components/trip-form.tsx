@@ -39,7 +39,7 @@ type FormState = {
   stops: StopDto[];
   days: Record<string, DayDto>;
   nights: Record<string, string>;
-  journeys: (JourneyDto & { km: string; roundTrip: boolean })[];
+  journeys: (JourneyDto & { km: string })[];
 };
 
 function toState(t?: TripInput): FormState {
@@ -64,7 +64,6 @@ function toState(t?: TripInput): FormState {
     journeys: (t?.journeys ?? []).map((j) => ({
       ...j,
       km: minorToInput(j.distanceMeters, 3).replace(/[.,]?0+$/, ""),
-      roundTrip: false,
     })),
   };
 }
@@ -97,15 +96,12 @@ function toInput(s: FormState, version?: number): TripInput {
     nights,
     journeys: s.journeys
       .filter((j) => j.km)
-      .map((j) => {
-        const meters = (parseAmount(j.km, 3) ?? 0) * (j.roundTrip ? 2 : 1);
-        return {
-          date: j.date || s.startDate,
-          vehicle: j.vehicle,
-          distanceMeters: meters,
-          description: j.description || undefined,
-        };
-      }),
+      .map((j) => ({
+        date: j.date || s.startDate,
+        vehicle: j.vehicle,
+        distanceMeters: parseAmount(j.km, 3) ?? 0,
+        description: j.description || undefined,
+      })),
     version,
   };
 }
@@ -449,7 +445,7 @@ export function TripForm({
                     <option value="other_motor_vehicle">{m.vehicle_other()}</option>
                   </Select>
                 </Field>
-                <Field label={j.roundTrip ? m.km_one_way() : m.km_total()}>
+                <Field label={m.km_total()}>
                   <Input
                     inputMode="decimal"
                     value={j.km}
@@ -463,14 +459,7 @@ export function TripForm({
                     onChange={(e) => update({ description: e.target.value })}
                   />
                 </Field>
-                <div className="flex items-center justify-between gap-2">
-                  <label className="flex items-center gap-2 text-sm whitespace-nowrap">
-                    <Checkbox
-                      checked={j.roundTrip}
-                      onChange={(e) => update({ roundTrip: e.target.checked })}
-                    />
-                    {m.round_trip()}
-                  </label>
+                <div className="flex items-center justify-end gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -494,7 +483,7 @@ export function TripForm({
             onClick={() =>
               set("journeys", [
                 ...s.journeys,
-                { date: s.startDate, vehicle: "car", distanceMeters: 0, km: "", roundTrip: true },
+                { date: s.startDate, vehicle: "car", distanceMeters: 0, km: "" },
               ])
             }
           >
