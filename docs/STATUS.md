@@ -49,4 +49,4 @@ exercised by a test. Scope reductions decided by the owner are in
   the employer-reimbursement basis of the mileage rates still needs verification.
 - Tax treatment of reimbursed meals/hospitality and foreign VAT is reported, not assessed.
 
-Commands to reproduce: see the Development section of the [README](../README.md) and the checks in [CLAUDE.md](../CLAUDE.md).
+Commands to reproduce: see the Development section of the [README](../README.md) and the checks in [AGENTS.md](../AGENTS.md).
