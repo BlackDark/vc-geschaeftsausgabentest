@@ -10,3 +10,17 @@ Read docs/BRIEF.md and all six documents in its reading order before implementat
 6. Provide actual setup, build, test, container and backup/restore instructions as the implementation takes shape. Finish with acceptance coverage, commands run, remaining gaps and any unverified rules.
 
 The brief described a new build; docs/STATUS.md is the record of what this implementation verifies.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`BlackDark/vc-geschaeftsausgabentest`), via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels, identity mapping: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
