@@ -39,4 +39,20 @@ test("mobile layout and receipt capture", async ({ page }) => {
     await noHorizontalScroll(page);
     await shot(page, "m-08-claim");
   }
+
+  // Several pending receipts in the expense dialog: duplicate warning, one shared explanation, no overflow.
+  await page.goto("/outlays");
+  await page.getByRole("button", { name: "Auslage" }).first().click();
+  const expense = page.getByRole("dialog");
+  for (const name of ["dup-a.png", "dup-b.png"]) {
+    await expense
+      .locator('input[type="file"]')
+      .first()
+      .setInputFiles({ name, mimeType: "image/png", buffer: receiptPng(77) });
+    await expect(expense.getByRole("button", { name: `Lesbar – bestätigen: ${name}` })).toBeVisible();
+  }
+  await expect(expense.getByText("Diese Datei wurde bereits hochgeladen.").first()).toBeVisible();
+  await expect(expense.getByText(/Ist der Beleg vollständig und lesbar/)).toHaveCount(1);
+  await noHorizontalScroll(page);
+  await shot(page, "m-09-pending-receipts");
 });
