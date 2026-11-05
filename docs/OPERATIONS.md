@@ -95,10 +95,14 @@ Domestic rates for a new year are seeded in `internal/rates` (they rarely change
 
 ## Releases
 
-Run *Actions → Release → Run workflow* on `main` with a version such as `0.2.0` (or push a tag
-`v0.2.0`). The workflow runs CI, creates the tag, pushes the image to
-`ghcr.io/blackdark/vc-geschaeftsausgabentest` with the tags `0.2.0`, `0.2` and `latest`, and
-creates the GitHub release with generated notes.
+Releases are automated via [release-please](https://github.com/googleapis/release-please):
+every Conventional Commit push to `main` updates (or opens) a release pull request with the
+next version and changelog. Merging that PR tags `vX.Y.Z`, creates the GitHub release, and
+triggers the image build, pushing to `ghcr.io/blackdark/vc-geschaeftsausgabentest` with the
+tags `X.Y.Z`, `X.Y` and `latest`.
+
+To build and push an already-tagged version manually (e.g. a hotfix tag created by hand), run
+*Actions → Release → Run workflow* with that tag.
 
 ## Health
 
