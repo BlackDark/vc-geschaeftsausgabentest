@@ -380,3 +380,5 @@ func (a *App) ReceiptFile(ctx context.Context, u *User, id int64, preview bool) 
 	b, err := a.Files.Read(key)
 	return b, mime, name, err
 }
+
+// gate probe: delete this comment
