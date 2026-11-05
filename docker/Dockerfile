@@ -2,9 +2,11 @@
 # Multi-arch build without emulation: every build step runs on the build
 # platform; only the final stage is assembled for the target platform.
 
-FROM --platform=$BUILDPLATFORM node:24.22.2-alpine@sha256:8a32c8cf649a49915a66e81e7a609223c708d0adabf288ee3f4077d765542f85 AS web
+FROM --platform=$BUILDPLATFORM node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS web
 WORKDIR /src/web
-RUN corepack enable
+# Node 26 images ship no corepack; keep in sync with packageManager in web/package.json
+ARG PNPM_VERSION=12.16.1
+RUN npm install --global "pnpm@${PNPM_VERSION}"
 COPY web/package.json web/pnpm-lock.yaml web/pnpm-workspace.yaml ./
 COPY web/tools/codegen/package.json tools/codegen/package.json
 COPY web/project.inlang project.inlang

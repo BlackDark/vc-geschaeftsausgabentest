@@ -61,5 +61,13 @@
       datasourceTemplate: "github-releases",
       extractVersionTemplate: "^v(?<version>.*)$",
     },
+    {
+      customType: "regex",
+      description: "pnpm version in the Dockerfile (Node 26 images ship no corepack)",
+      managerFilePatterns: ["/(^|/)Dockerfile$/"],
+      matchStrings: ["ARG PNPM_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      depNameTemplate: "pnpm",
+      datasourceTemplate: "npm",
+    },
   ],
 }
