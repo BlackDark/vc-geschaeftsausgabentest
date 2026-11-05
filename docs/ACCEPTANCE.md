@@ -29,7 +29,7 @@ Unless stated otherwise: EUR, Europe/Berlin, no advances or additional costs, an
 | A07 | Two-day domestic trip; lunch and dinner provided on arrival, breakfast on departure | Arrival **0**, departure **8.40**. No negative daily result. |
 | A08 | One-day >8h; lunch provided; user contribution 5 | Deduction **6.20**, remaining meal allowance **7.80**. Contribution 15 instead makes the lunch deduction zero, not negative. |
 | A09 | Lodging fixture: domestic allowance 20; first night eligible for allowance, second provided | Lodging total **20**. Paying actual cost plus allowance for the same night is rejected; retaining a non-payable invoice as context is allowed. |
-| A10 | Car: total 284 km × 0.30; other motor vehicle: 38 km × 0.20 | Mileage **85.20 + 7.60 = 92.80**. Round-trip helper does not double an already-total distance. |
+| A10 | Car: total 284 km × 0.30; other motor vehicle: 38 km × 0.20 | Mileage **85.20 + 7.60 = 92.80**. Distance is entered as total; nothing doubles it. |
 | A11 | Expense gross 133.17; portions 117.70 at 7% and 15.47 at 19% | Net **110 + 13 = 123**, VAT **7.70 + 2.47 = 10.17**, gross **133.17**. A receipt can also be split across two expenses without adding its total again. |
 | A12 | USD 48.50; fixture rate 1 EUR = 1.1650 USD, preceding Friday for a Saturday receipt | EUR **41.63**, Friday publication date recorded. Actual-debit override **42.37** remains exact. Test a currency with a non-two-decimal exponent separately. |
 | A13 | Reimbursement total 412.40; advance 300, variant advance 500 | Payout **112.40**, variant **−87.60** labeled repayment. An advance cannot be reused. |
