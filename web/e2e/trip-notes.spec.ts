@@ -7,9 +7,9 @@ test("trip detail shows notes", async ({ page }) => {
   await page.goto("/trips/new");
   await page.getByLabel("Anlass", { exact: true }).fill("Notizen-Reise");
   await page.getByLabel("Ziel", { exact: true }).fill("Köln");
-  await page.getByLabel("Abfahrt", { exact: true }).fill("2026-05-04");
+  await page.getByLabel("Abfahrt", { exact: true }).fill("2026-06-08");
   await page.locator("#startTime").fill("08:00");
-  await page.getByLabel("Rückkehr", { exact: true }).fill("2026-05-04");
+  await page.getByLabel("Rückkehr", { exact: true }).fill("2026-06-08");
   await page.locator("#endTime").fill("18:00");
   await page.getByRole("button", { name: "Reise speichern" }).click();
   await expect(page.getByRole("heading", { name: "Notizen-Reise" })).toBeVisible();
