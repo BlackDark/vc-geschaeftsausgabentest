@@ -1,55 +1,222 @@
-# Glossary
+# Spesen
 
-Definitions describe the business domain. English is the default for code and API names; use the English terms below consistently. German UI text uses the matching German terms. Technical storage details do not change these definitions.
+Self-hosted tool for recording German business-travel costs and other personally paid business purchases, and claiming their reimbursement from an employer. English terms are canonical in code and API names; German UI text uses the `_German_` term of each entry. Rules and calculations live in `docs/CALCULATION_RULES.md` and `docs/SPECIFICATION.md`, not here.
 
-| English term | German term | Definition |
-| --- | --- | --- |
-| User | Nutzer | A person recording and claiming their own business travel expenses. |
-| Admin | Admin | A user who also manages accounts and shared rate tables. This role grants no access to another user's travel records. |
-| Employer | Arbeitgeber | The organization reimbursing a user's business travel. Employers belong to individual users. |
-| Business trip | Reise | A business-related absence from home and the first place of work, from departure to return. Ordinary commuting is excluded. |
-| Travel day | Reisetag | A local calendar date touched by a trip, with its day type, applicable rate location, provided meals and allowance result. |
-| Stop | Ortswechsel | A recorded arrival during a trip, identifying local time, country, rate location and whether business activity took place there. |
-| Work location | Tätigkeitsstätte | A place where business activity occurs; repeated attendance may affect meal allowance eligibility. |
-| First place of work | Erste Tätigkeitsstätte | The employment-related location used to distinguish ordinary commuting from qualifying business travel. Eligibility is declared by the user. |
-| Rate location | Satzort | A country or named city/region for which an annual rate table defines allowances. |
-| Applicable country | Maßgebliches Land | The country whose meal allowance applies to a travel day; it need not be the country where a meal was eaten. |
-| Lodging | Unterkunft | The arrangement for the night following a travel day: actual cost, allowance, provided, in transit or none. |
-| Expense | Ausgabe | A recorded purchase or charge, with its payer and employer. It may belong to a trip or be a standalone outlay. Its gross amount is distinct from its reimbursable amount. |
-| Standalone outlay | Sonstige Auslage | A personally paid business expense without a trip, such as tools or software, reimbursed through the same claim. |
-| Payer | Bezahlt von | Whether the user or employer paid the charge. A company card belongs to the employer regardless of who used it. |
-| Reimbursable amount | Erstattungsfähiger Betrag | The amount payable to the user for an item; employer-paid expenses have zero payable amount. |
-| Lodging reimbursement method | Erstattungsart der Übernachtung | Actual personally paid cost, eligible lodging allowance, or no reimbursement. A company-paid/provided night has no lodging payout. |
-| Cost type | Kostenart | The classification of an expense: travel uses transport, meals, lodging, incidental travel costs or business hospitality; standalone outlays use tools/equipment, software/services or other business outlay. |
-| VAT portion | Steueranteil | A part of an expense carrying one VAT rate and tax country, with net, VAT and gross amounts. |
-| Mileage journey | Fahrt | Distance driven in a private motor vehicle and reimbursed using a mileage allowance. It is distinct from the overall business trip. |
-| Business hospitality | Bewirtung | An expense for entertaining business partners, documented with occasion, place and participants. |
-| Provided meal | Gestellte Mahlzeit | Breakfast, lunch or dinner provided by or on behalf of the employer, including a qualifying reimbursed meal. |
-| Meal contribution | Zuzahlung | The user's own payment towards a provided meal, reducing that meal's allowance deduction. |
-| Allowance | Pauschale | A prescribed amount that can be claimed without proving that exact expenditure. |
-| Meal allowance | Verpflegungspauschale | The daily allowance for additional meal costs arising from qualifying travel. |
-| Meal deduction | Mahlzeitenkürzung | Reduction of a meal allowance for a provided meal. |
-| Lodging allowance | Übernachtungspauschale | An eligible fixed overnight amount used instead of reimbursing actual lodging costs. |
-| Mileage allowance | Kilometerpauschale | Reimbursement based on eligible distance and the applicable vehicle rate. |
-| Rate table | Satztabelle | A dated set of allowance values and thresholds, with sources and revision history. |
-| Receipt | Beleg | Documentary evidence supporting expenses; one receipt may support several expenses and vice versa. |
-| Original file | Originaldatei | The exact file uploaded by the user. For a paper receipt photo, this is the uploaded capture, not the paper itself. |
-| Archived receipt | Archivbeleg | The confirmed evidence retained immutably. In this baseline it includes the original uploaded files; previews and export images are derivatives. |
-| Self-issued receipt | Eigenbeleg | A user-authored substitute when third-party evidence is unavailable; it records the missing evidence and reason. |
-| Receipt inbox | Belegeingang | Receipts captured before they have been assigned to expenses. |
-| Receipt number | Belegnummer | A permanent human-readable reference assigned when evidence is confirmed. |
-| Expense claim | Abrechnung | A document grouping a user’s selected trips, standalone outlays and advances for one employer and period; submission freezes a version. “Abrechnung” is the common UI name for the combined reimbursement claim. |
-| Claim period | Abrechnungszeitraum | An inclusive date range; trips are selected by local end date and standalone outlays by expense date. |
-| Claim number | Abrechnungsnummer | A permanent human-readable reference allocated on first successful submission. |
-| Advance | Vorschuss | An amount already paid by an employer and offset against one claim for that employer. |
-| Reimbursement total | Erstattungsbetrag | Total reimbursable expenses and allowances before subtracting advances. |
-| Payout amount | Auszahlungsbetrag | Reimbursement total minus assigned advances. A negative value means repayment to the employer. |
-| Claim status | Abrechnungsstatus | Draft, Submitted or Paid. Submitted does not imply approval or delivery to the employer. |
-| Unlock | Entsperrung | An owner's recorded transition from Submitted to Draft for correction, retaining earlier submitted versions. |
-| Snapshot | Festschreibungsstand | The frozen inputs, rules, rates, results and evidence references of a submitted claim version. |
-| Export | Export | Immutable files generated from a submitted snapshot. A preview is not a submitted export. |
-| Warning | Warnung | A condition requiring informed acknowledgement before submission. |
-| Blocker | Blocker | A condition that prevents submission until resolved. |
-| Three-month limit | Dreimonatsfrist | A restriction on meal allowances for longer-term work at the same location, subject to interruption rules. |
+## Language
 
-“Trip”, “expense” and “claim” must remain distinct. An allowance is not an expense paid by the user; an export is not the claim itself. A checksum proves byte identity, not legal compliance.
+### People
+
+**User**:
+A person recording and claiming their own business expenses.
+_German_: Nutzer
+_Avoid_: Employee
+
+**Admin**:
+A user who also manages accounts and shared rate tables, without access to anyone else's records.
+_German_: Admin
+
+**Employer**:
+The organization that reimburses a user. Employers belong to individual users.
+_German_: Arbeitgeber
+_Avoid_: Company, client
+
+### Trips
+
+**Trip**:
+A business-related absence from home and the first place of work, from departure to return. Ordinary commuting is not a trip.
+_German_: Reise
+_Avoid_: Journey, travel
+
+**Travel day**:
+A local calendar date touched by a trip, with its day type, rate location, provided meals and allowance result.
+_German_: Reisetag
+
+**Stop**:
+A recorded arrival during a trip, with local time, country, rate location and whether business activity took place.
+_German_: Ortswechsel
+_Avoid_: Leg, waypoint
+
+**Work location**:
+A place where business activity occurs; repeated attendance can affect meal allowance eligibility.
+_German_: Tätigkeitsstätte
+
+**First place of work**:
+The employment-related location that separates commuting from business travel, as declared by the user.
+_German_: Erste Tätigkeitsstätte
+_Avoid_: Office, home base
+
+**Mileage journey**:
+Distance driven in a private motor vehicle. Not the same as the overall trip.
+_German_: Fahrt
+_Avoid_: Trip, drive
+
+**Provided meal**:
+A breakfast, lunch or dinner supplied by or for the employer, including a qualifying reimbursed meal.
+_German_: Gestellte Mahlzeit
+_Avoid_: Free meal
+
+**Meal contribution**:
+The user's own payment towards a provided meal, which reduces that meal's deduction.
+_German_: Zuzahlung
+
+**Lodging**:
+The arrangement for the night after a travel day: actual cost, allowance, provided, in transit or none.
+_German_: Unterkunft
+_Avoid_: Hotel, accommodation
+
+### Allowances and rates
+
+**Allowance**:
+A prescribed amount claimable without proving the exact expenditure. An allowance is not an expense.
+_German_: Pauschale
+_Avoid_: Flat rate
+
+**Meal allowance**:
+The daily allowance for additional meal costs of qualifying travel.
+_German_: Verpflegungspauschale
+_Avoid_: Per diem
+
+**Meal deduction**:
+The reduction of a meal allowance for a provided meal.
+_German_: Mahlzeitenkürzung
+
+**Lodging allowance**:
+An eligible fixed overnight amount used instead of reimbursing actual lodging cost.
+_German_: Übernachtungspauschale
+
+**Mileage allowance**:
+Reimbursement from eligible distance and the vehicle rate.
+_German_: Kilometerpauschale
+
+**Rate location**:
+A country or named city/region for which a rate table defines allowances.
+_German_: Satzort
+_Avoid_: Destination
+
+**Applicable country**:
+The country whose meal allowance applies to a travel day; not necessarily where a meal was eaten.
+_German_: Maßgebliches Land
+
+**Rate table**:
+A dated set of allowance values and thresholds, with sources and revision history.
+_German_: Satztabelle
+_Avoid_: Tariff
+
+**Three-month limit**:
+The restriction on meal allowances for longer-term work at the same location.
+_German_: Dreimonatsfrist
+
+### Expenses
+
+**Expense**:
+A recorded purchase or charge with its payer and employer. It belongs to a trip or is a standalone outlay.
+_German_: Ausgabe
+_Avoid_: Cost, spending
+
+**Standalone outlay**:
+A personally paid business expense without a trip, such as tools or software.
+_German_: Sonstige Auslage
+_Avoid_: Other expense, misc
+
+**Payer**:
+Who paid a charge: the user or the employer. A company card counts as the employer, whoever used it.
+_German_: Bezahlt von
+
+**Reimbursable amount**:
+The amount payable to the user for an item. Distinct from the gross amount; zero for employer-paid expenses.
+_German_: Erstattungsfähiger Betrag
+
+**Cost type**:
+The classification of an expense, such as transport, meals or lodging for trips, or tools, software or other for standalone outlays.
+_German_: Kostenart
+_Avoid_: Category
+
+**VAT portion**:
+Part of an expense with one VAT rate and tax country.
+_German_: Steueranteil
+
+**Business hospitality**:
+An expense for entertaining business partners, documented with occasion, place and participants.
+_German_: Bewirtung
+
+### Evidence
+
+**Receipt**:
+Documentary evidence for expenses. One receipt can support several expenses and the reverse.
+_German_: Beleg
+_Avoid_: Invoice, voucher
+
+**Receipt inbox**:
+Receipts captured but not yet assigned to expenses.
+_German_: Belegeingang
+
+**Receipt number**:
+The permanent human-readable reference given to a receipt when it is confirmed.
+_German_: Belegnummer
+
+**Original file**:
+The exact file the user uploaded. For a paper receipt, the uploaded capture, not the paper.
+_German_: Originaldatei
+
+**Archived receipt**:
+A confirmed receipt kept immutably, including its original files. Previews and export images are derivatives of it.
+_German_: Archivbeleg
+
+**Self-issued receipt**:
+A user-written substitute for unavailable third-party evidence, recording what is missing and why.
+_German_: Eigenbeleg
+_Avoid_: Own receipt, substitute receipt
+
+### Claims
+
+**Claim**:
+A document grouping a user's selected trips, standalone outlays and advances for one employer and period. Submitting it freezes a version. Distinct from a trip, an expense and its export.
+_German_: Abrechnung
+_Avoid_: Report, statement, expense report
+
+**Claim period**:
+The inclusive date range of a claim.
+_German_: Abrechnungszeitraum
+
+**Claim number**:
+The permanent human-readable reference given to a claim on its first successful submission.
+_German_: Abrechnungsnummer
+
+**Claim status**:
+Draft, Submitted or Paid. Submitted does not mean approved by or delivered to the employer.
+_German_: Abrechnungsstatus
+
+**Advance**:
+An amount an employer already paid, offset against one claim.
+_German_: Vorschuss
+
+**Reimbursement total**:
+The reimbursable expenses and allowances of a claim before advances.
+_German_: Erstattungsbetrag
+
+**Payout amount**:
+The reimbursement total minus advances. Negative means repayment to the employer.
+_German_: Auszahlungsbetrag
+_Avoid_: Balance
+
+**Snapshot**:
+The frozen inputs, rules, rates, results and evidence references of a submitted claim version.
+_German_: Festschreibungsstand
+
+**Export**:
+Files generated from a snapshot. A preview is not an export.
+_German_: Export
+
+**Unlock**:
+The owner's recorded return of a Submitted claim to Draft for correction; earlier versions remain.
+_German_: Entsperrung
+_Avoid_: Reopen
+
+**Warning**:
+A condition the user must acknowledge before submission.
+_German_: Warnung
+
+**Blocker**:
+A condition that prevents submission until resolved.
+_German_: Blocker
+_Avoid_: Error
