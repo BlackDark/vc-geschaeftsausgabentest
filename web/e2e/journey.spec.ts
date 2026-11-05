@@ -1,30 +1,28 @@
 import { expect, test } from "@playwright/test";
+import { loginWithEmployer } from "./helpers";
 
 /** Journeys store exactly the entered total distance (C14); there is no round-trip toggle. */
 test("journey distance is stored and shown as entered", async ({ page }) => {
-  const setup = await page.request.post("/api/setup", {
-    data: { token: "e2e-setup-token", username: "user-a", name: "User A", password: "correct horse battery" },
-  });
-  if (!setup.ok()) {
-    const res = await page.request.post("/api/login", {
-      data: { username: "user-a", password: "correct horse battery" },
-    });
-    expect(res.ok()).toBeTruthy();
-  }
+  await loginWithEmployer(page);
 
   await page.goto("/trips/new");
   await page.getByLabel("Anlass", { exact: true }).fill("Fahrtentest");
-  await page.getByLabel("Abfahrt", { exact: true }).fill("2026-05-04");
-  await page.getByLabel("Rückkehr", { exact: true }).fill("2026-05-04");
+  await page.getByLabel("Abfahrt", { exact: true }).fill("2026-09-07");
+  await page.getByLabel("Rückkehr", { exact: true }).fill("2026-09-07");
   await page.getByRole("button", { name: "Fahrt hinzufügen" }).click();
-  await expect(page.getByText("Hin und zurück")).toHaveCount(0);
-  await page.getByLabel("Strecke gesamt (km)", { exact: true }).fill("120");
+  const km = page.getByLabel("Strecke gesamt (km)", { exact: true });
+  await expect(km).toBeVisible();
+  const row = km.locator("xpath=ancestor::div[contains(@class,'rounded-lg')][1]");
+  await expect(row.getByRole("checkbox")).toHaveCount(0);
+  await km.fill("120");
   await page.getByRole("button", { name: "Reise speichern" }).click();
   await expect(page.getByRole("heading", { name: "Fahrtentest" })).toBeVisible();
   await expect(page.getByText(/120 km/)).toBeVisible();
   await expect(page.getByText("36,00 €").first()).toBeVisible();
 
   await page.goto(`${page.url()}/edit`);
-  await expect(page.getByLabel("Strecke gesamt (km)", { exact: true })).toHaveValue("120");
-  await expect(page.getByText("Hin und zurück")).toHaveCount(0);
+  const editKm = page.getByLabel("Strecke gesamt (km)", { exact: true });
+  await expect(editKm).toHaveValue("120");
+  const editRow = editKm.locator("xpath=ancestor::div[contains(@class,'rounded-lg')][1]");
+  await expect(editRow.getByRole("checkbox")).toHaveCount(0);
 });
