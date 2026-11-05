@@ -48,7 +48,8 @@ Open the URL, enter the setup token and create your account. Configuration, Pock
 
 - [Operations](docs/OPERATIONS.md): configuration, Pocket ID, backup/restore, rate import
 - [Status](docs/STATUS.md): acceptance coverage, open gaps and unverified rules
-- [Calculation rules](docs/CALCULATION_RULES.md), [Decisions](docs/DECISIONS.md), [Architecture](docs/ARCHITECTURE.md), [Original brief](docs/BRIEF.md)
+- [Specification](docs/SPECIFICATION.md), [Calculation rules](docs/CALCULATION_RULES.md), [Acceptance scenarios](docs/ACCEPTANCE.md)
+- [Architecture](docs/ARCHITECTURE.md), [Decisions](docs/DECISIONS.md), [ADRs](docs/adr/), [Glossary](GLOSSARY.md)
 
 ## 🛠️ Development
 

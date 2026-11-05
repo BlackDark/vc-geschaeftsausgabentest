@@ -1,15 +1,21 @@
 # Agent instructions
 
-Read docs/BRIEF.md and all six documents in its reading order before implementation. They define the Core; docs/DECISIONS.md distinguishes inherited decisions from new defaults and records the owner's decisions of 2026-10-19 (stack, scope). docs/STATUS.md lists what is implemented, verified and still open. CLAUDE.md has the commands and conventions.
+Read what touches your change before implementing:
 
-1. Keep the technology choices in docs/ARCHITECTURE.md.
-2. Complete the mandatory first flow in docs/ACCEPTANCE.md using fixtures/core-cases.json: login, trip/hotel/meal entry, independent outlays, an advance, export and a correction version. Then expand until every Core acceptance scenario passes. Use one interface; preserve per-user data isolation.
-3. Keep calculation rules in one server-side calculation module. Use stable rule identifiers in its results. Use GLOSSARY.md for domain terminology.
-4. Reuse the inherited CSV datasets described in data/README.md; validate schema, dates, keys and numeric values on import. A fresh legal review is not a prerequisite for this implementation experiment. Keep synthetic test rates separate from these datasets and document remaining production-source checks.
-5. Record material assumptions in docs/DECISIONS.md. Ask about choices that change scope or financial results; proceed with the documented defaults for ordinary implementation decisions.
-6. Provide actual setup, build, test, container and backup/restore instructions as the implementation takes shape. Finish with acceptance coverage, commands run, remaining gaps and any unverified rules.
+1. [GLOSSARY.md](GLOSSARY.md): domain vocabulary; use its English terms in code and docs.
+2. [docs/adr/](docs/adr/): hard-to-reverse decisions and why.
+3. [docs/SPECIFICATION.md](docs/SPECIFICATION.md): required behavior and scope (P01–P22).
+4. [docs/CALCULATION_RULES.md](docs/CALCULATION_RULES.md): arithmetic and tax rules (C01–C22).
+5. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): technology choices and technical constraints.
+6. [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md): scenarios A01–A30 and fixtures F01–F03 in `fixtures/core-cases.json`.
+7. [docs/DECISIONS.md](docs/DECISIONS.md): owner scope decisions, open verification items.
+8. [docs/STATUS.md](docs/STATUS.md): what is implemented, verified and still open.
 
-The brief described a new build; docs/STATUS.md is the record of what this implementation verifies.
+[CLAUDE.md](CLAUDE.md) has the commands and conventions.
+
+- Keep the technology choices in `docs/ARCHITECTURE.md`.
+- Rate data comes from the CSV datasets described in `data/README.md`, validated on import. Synthetic fixture rates stay separate from them.
+- Record material assumptions in `docs/DECISIONS.md`. Ask about choices that change scope or financial results; proceed with the documented defaults for ordinary implementation decisions.
 
 ## Agent skills
 

@@ -4,10 +4,9 @@ Read AGENTS.md first; it applies to every session.
 
 ## Documentation
 
-The documentation is in `docs/`. Read the pages that touch the change before starting:
-`CALCULATION_RULES.md` (rule IDs C01–C22) for anything that changes amounts, `ARCHITECTURE.md`
-for how the pieces fit, `DECISIONS.md` for scope decisions, `STATUS.md` for what is done and
-what is still open. `GLOSSARY.md` defines the domain terms; use its English terms in code.
+The reading list is in `AGENTS.md`. Besides it: `docs/CALCULATION_RULES.md` (rule IDs C01–C22)
+is required reading for anything that changes amounts, and `docs/STATUS.md` shows what is done
+and what is still open.
 
 ## Reference implementations
 
@@ -64,8 +63,9 @@ do not run CI), watch CI until it is green, fix failures on the branch, then mer
 ## Code style
 
 Technology choices follow the techstack-starter skill; deviations and why: Go backend with Huma
-and Hey API instead of TanStack Start (small image, see DECISIONS.md); pnpm 12 (lockfile);
-Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0 has no compiler API.
+and Hey API instead of TanStack Start (small image, see `docs/adr/0001-go-huma-hey-api-stack.md`);
+pnpm 12 (lockfile); Hey API runs with TypeScript 6 in `web/tools/codegen` because TypeScript 7.0
+has no compiler API (see `docs/DECISIONS.md`).
 
 Clean Code, written functionally: clear names, small functions that do one thing, dependencies
 passed in, no duplication or dead code, comments that say why. Errors as values. A file does one
