@@ -1,5 +1,5 @@
 import { deflateSync } from "node:zlib";
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 /** A small synthetic receipt PNG; n varies the bytes. */
 export function receiptPng(n: number): Buffer {
@@ -45,4 +45,36 @@ function crc32(buf: Buffer): number {
 export async function shot(page: Page, name: string) {
   if (process.env.E2E_SCREENSHOTS)
     await page.screenshot({ path: `${process.env.E2E_SCREENSHOTS}/${name}.png`, fullPage: true });
+}
+
+/** Creates the first user, or logs in when an earlier spec already did. */
+export async function login(page: Page) {
+  const setup = await page.request.post("/api/setup", {
+    data: { token: "e2e-setup-token", username: "user-a", name: "User A", password: "correct horse battery" },
+  });
+  if (!setup.ok()) {
+    const res = await page.request.post("/api/login", {
+      data: { username: "user-a", password: "correct horse battery" },
+    });
+    expect(res.ok()).toBeTruthy();
+  }
+}
+
+export async function noHorizontalScroll(page: Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow, `horizontal overflow on ${page.url()}`).toBeLessThanOrEqual(0);
+}
+
+/** Logs in and makes sure an employer exists, so a spec passes when run alone. */
+export async function loginWithEmployer(page: Page) {
+  await login(page);
+  const current = await page.request.get("/api/employer");
+  expect(current.ok()).toBeTruthy();
+  if ((await current.json()).employer) return;
+  const saved = await page.request.put("/api/employer", {
+    data: { name: "Example Company", address: "Musterstraße 1\n10115 Berlin" },
+  });
+  expect(saved.ok()).toBeTruthy();
 }

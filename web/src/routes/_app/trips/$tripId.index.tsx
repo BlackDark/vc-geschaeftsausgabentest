@@ -62,6 +62,7 @@ function TripPage() {
   if (error || !data) return <Alert variant="error">{m.not_found()}</Alert>;
   const { trip, result } = data;
   const t = result.totals;
+  const notes = trip.notes?.trim();
   const back = (
     <Link
       to="/trips"
@@ -128,6 +129,14 @@ function TripPage() {
               <CardContent>
                 <IssueList issues={data.issues} />
               </CardContent>
+            </Card>
+          ) : null}
+          {notes ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{m.notes()}</CardTitle>
+              </CardHeader>
+              <CardContent className="whitespace-pre-wrap wrap-anywhere text-sm">{notes}</CardContent>
             </Card>
           ) : null}
           <ExpensesCard data={data} />

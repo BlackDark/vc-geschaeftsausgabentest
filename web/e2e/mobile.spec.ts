@@ -1,24 +1,5 @@
-import { expect, type Page, test } from "@playwright/test";
-import { receiptPng, shot } from "./helpers";
-
-async function login(page: Page) {
-  const setup = await page.request.post("/api/setup", {
-    data: { token: "e2e-setup-token", username: "user-a", name: "User A", password: "correct horse battery" },
-  });
-  if (!setup.ok()) {
-    const res = await page.request.post("/api/login", {
-      data: { username: "user-a", password: "correct horse battery" },
-    });
-    expect(res.ok()).toBeTruthy();
-  }
-}
-
-async function noHorizontalScroll(page: Page) {
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  );
-  expect(overflow, `horizontal overflow on ${page.url()}`).toBeLessThanOrEqual(0);
-}
+import { expect, test } from "@playwright/test";
+import { login, noHorizontalScroll, receiptPng, shot } from "./helpers";
 
 /** Main pages are usable at 360 px without horizontal scrolling (P19, A21, A26). */
 test("mobile layout and receipt capture", async ({ page }) => {
