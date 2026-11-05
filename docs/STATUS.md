@@ -1,6 +1,6 @@
 # Implementation status
 
-State of 2026-10-19 on branch `claude/sharp-mayer-6yryxy`. "Pass" means an automated test
+State of 2026-10-19. "Pass" means an automated test
 exercises the scenario; "partial" names what is missing; "unverified" means implemented but not
 exercised by a test. Scope reductions decided by the owner are in
 [DECISIONS.md](DECISIONS.md#owner-decisions-2026-10-19).
@@ -43,17 +43,10 @@ exercised by a test. Scope reductions decided by the owner are in
 
 ## Unverified rules and data
 
-- Rate values in `data/*.csv` are inherited and not re-audited (see DECISIONS.md).
-- Domestic 14/28/20 EUR and mileage 0.30/0.20 EUR/km for 2024–2026 are seeded from the brief;
+- Rate values in `data/*.csv` are not re-audited against the official letters
+  ([DECISIONS.md](DECISIONS.md#tax-and-source-verification)).
+- Domestic 14/28/20 EUR and mileage 0.30/0.20 EUR/km for 2024–2026 are seeded in `internal/rates`;
   the employer-reimbursement basis of the mileage rates still needs verification.
 - Tax treatment of reimbursed meals/hospitality and foreign VAT is reported, not assessed.
 
-## Commands run for this state
-
-```text
-go vet ./... ; go test ./...                       # calc, rates, app (F01, backup/restore), api (A17, A20)
-pnpm --dir web check                               # Biome, tsc (TypeScript 7), Vitest
-pnpm --dir web build ; go build ./cmd/spesen
-SPESEN_BIN=… pnpm --dir web exec playwright test   # F01 desktop, 360 px mobile
-spesen backup DIR ; spesen verify                  # CLI smoke test
-```
+Commands to reproduce: see the Development section of the [README](../README.md) and the checks in [CLAUDE.md](../CLAUDE.md).
