@@ -1,10 +1,10 @@
 # Acceptance scenarios
 
-Core completion requires all scenarios below, plus the product requirements they reference. Fixtures are synthetic, contain no real personal data and use fixed rates/timestamps. Financial fixtures exercise the rules, not the previous implementation's output. Test rate values below are not production rate data.
+Core completion requires all scenarios below, plus the product requirements they reference. Fixtures are synthetic, contain no real personal data and use fixed rates/timestamps. Test rate values below are not production rate data.
 
 ## Mandatory first working flow
 
-Use F01 in [fixtures/core-cases.json](../fixtures/core-cases.json). Complete this before expanding the implementation:
+Use F01 in [fixtures/core-cases.json](../fixtures/core-cases.json). 
 
 1. Sign in and configure the employer in one interface.
 2. Record the domestic trip, personally paid hotel and included breakfasts.
@@ -12,7 +12,7 @@ Use F01 in [fixtures/core-cases.json](../fixtures/core-cases.json). Complete thi
 4. Create a quarterly claim including both groups and the advance. Show a payout of EUR 182.80 and export PDF+ZIP.
 5. Unlock with a reason, change the software outlay and resubmit. Version 2 pays EUR 192.80; version 1 remains unchanged.
 
-Then use F02 for company-paid/actual-cost/allowance foreign lodging and F03 for an outlay-only claim. These are the complete shared fixture package: three small JSON scenarios, not a large generated dataset. Existing financial examples below remain targeted checks for completing Core. OIDC/proxy login remain Core even though the first slice can use password login.
+Then use F02 for company-paid/actual-cost/allowance foreign lodging and F03 for an outlay-only claim. These are the complete fixture package: three small JSON scenarios, not a large generated dataset. The financial examples below remain targeted checks for completing Core. OIDC/proxy login remain Core even though the first slice can use password login.
 
 ## Financial examples
 
@@ -54,12 +54,12 @@ Also test conservation of VAT/FX totals including rounding residuals, strict own
 | A25 | Same-day trip added after another claim is submitted; two submissions racing for daily entitlement | Existing snapshot remains unchanged; only remaining entitlement is available. Overallocation blocks submission and points to the claim requiring correction. |
 | A26 | German/English desktop/mobile use | Both languages complete the main flow, including errors and export headings; currency/date formatting is unambiguous. Keyboard navigation, theme and form preservation work. |
 | A27 | Empty database, upgrade fixture, persistent restart, backup and clean restore | Migrations preserve financial records. Restored submitted claim and all evidence verify by checksum. Both target images build; nonroot container starts with read-only root filesystem. |
-| A28 | Rate tables for 2024–2026, admin override and next-year import | Use the inherited CSV datasets in data/README.md with provenance and schema/key/year/number validation; malformed/duplicate imports fail clearly. Drafts use a valid new revision; submitted snapshots retain old values. Synthetic fixture rates remain separate. Full legal-source re-auditing is not an experiment gate. |
+| A28 | Rate tables for 2024–2026, admin override and next-year import | Use the inherited CSV datasets in data/README.md with provenance and schema/key/year/number validation; malformed/duplicate imports fail clearly. Drafts use a valid new revision; submitted snapshots retain old values. Synthetic fixture rates remain separate. Full legal-source re-auditing is not a gate. |
 | A29 | Foreign lodging: company-paid, privately paid actual cost, privately paid eligible allowance (F02) | Actual costs remain visible; company-paid cost adds zero to payout. The privately paid allowance night excludes its actual cost from payout. Company-paid breakfast affects meals. Payout is EUR 510.00. |
 | A30 | Tools/software in a combined quarterly claim (F01), and outlays without travel (F03) | Separate travel/outlay subtotals, common payout and evidence export. F03 pays EUR 80.00 without a dummy trip. A second claim cannot reuse an outlay; correction retains the prior version. |
 
-## Test approach and comparison
+## Test approach
 
 Use focused Go tests for rules and invariants, real SQLite integration tests for transactions/ownership/migrations, API tests for authentication/security, and Playwright for the complete claim flow. Use a mock OIDC provider and a controlled proxy. Avoid live ECB/OIDC services in deterministic acceptance runs. Inspect a representative PDF visually; file existence alone does not establish a readable export.
 
-For each agent run record pass/fail/unverified per requirement/scenario, elapsed time, budget/tool access, commands actually executed and deviations from the brief. Evaluate financial correctness, evidence/version preservation, authentication/ownership, mobile usability and reproducible operation separately. An unrun scenario is unverified. Extra features do not compensate for a failed Core scenario. No fixed code layout, line count or coverage percentage is a comparison criterion.
+Record pass/partial/unverified per scenario in [STATUS.md](STATUS.md). An unrun scenario is unverified. Extra features do not compensate for a failed Core scenario.

@@ -6,7 +6,7 @@ Build a self-hosted application for an employee or managing director to record b
 
 The Core must support the complete journey: sign in, configure an employer, record travel, company-paid travel costs and personal outlays with or without a trip, attach receipts, inspect calculations, submit a claim, download its export and record payment. Priorities are correct calculations, preserved evidence, fast mobile entry and simple operation.
 
-**Core** means required for this experiment. **Extension** means deliberately deferred. The architecture document fixes the technology choices; it does not prescribe the previous application's structure.
+**Core** means required. **Extension** means deliberately deferred. The architecture document fixes the technology choices. Where the owner narrowed a requirement below (trusted-proxy login, ECB lookup, employer management, rate import), [DECISIONS.md](DECISIONS.md#owner-decisions-2026-10-19) takes precedence.
 
 ## Core requirements
 
@@ -27,7 +27,7 @@ The Core must support the complete journey: sign in, configure an employer, reco
 | P13 | Create a claim for one employer and an inclusive custom date range, with month/quarter shortcuts. Suggest unclaimed trips by local end date and unclaimed standalone outlays by expense date in the period; allow deselection. Support claims containing either group or both, without inventing a dummy trip. Include only that employer's unassigned advances dated no later than period end. |
 | P14 | Before submission show blockers, warnings, totals, advance deductions and a draft preview. Require acknowledgement of the current warnings. Freeze inputs, rates, results, evidence links and user/employer details on successful submission. |
 | P15 | Enforce Draft → Submitted → Paid. Submitted trips and all their calculation inputs and evidence assignments are locked. Only the owner can unlock a Submitted claim with a reason; older snapshots and exports remain accessible. Undo Paid with a reason before unlocking. |
-| P16 | Produce a readable PDF summary and a ZIP containing that PDF, a versioned JSON snapshot, expenses/travel-days/mileage CSVs (including standalone outlays and payer/reimbursable fields), original evidence and a SHA-256 manifest. All formats must agree with the snapshot. The Core PDF may refer to evidence in the ZIP; embedding every receipt page and PDF/A are extensions. |
+| P16 | Produce a readable PDF summary and a ZIP containing that PDF, a versioned JSON snapshot, expenses/travel-days/mileage CSVs (including standalone outlays and payer/reimbursable fields), original evidence and a SHA-256 manifest. All formats must agree with the snapshot. The PDF embeds every receipt page ([ADR 0005](adr/0005-export-pdf-with-all-receipt-pages-and-zip.md)); PDF/A is an extension. |
 | P17 | Support annual rate data for 2024–2026, with source references, admin overrides and a validated way to import another year. Use the included inherited CSVs as the initial foreign-rate datasets; missing or invalid required rates block submission. A fresh full source audit is not a Core implementation gate. Overrides affect draft calculations only. |
 | P18 | Keep an append-only application audit trail for financial/evidence changes, rate changes and claim transitions, including actor, time and reason where required. Record the event in the transaction committing the change. |
 | P19 | Provide German and English UI and claim summaries, responsive forms usable at 360 px, keyboard-accessible controls, explicit save/error feedback and a choice of light/dark/system theme. Preserve entered form values on recoverable errors. |
@@ -44,7 +44,7 @@ The Core must support the complete journey: sign in, configure an employer, reco
 - Submission temporarily freezes affected data while generating files. Concurrent edits fail with an actionable conflict. Publish a Submitted version only when every required artifact exists and verifies; failure leaves an editable Draft and no published partial export. Retries and restarts must not double-assign trips/advances or publish duplicate versions.
 - Payment is mutable claim metadata recorded in the audit trail, with payment date and optional note. It does not rewrite an earlier PDF. Claims that have ever been submitted cannot be deleted.
 - A later trip or meal edit can affect a day already claimed elsewhere. Preserve old snapshots and block further submission if the daily entitlement is overallocated; require correction through the affected claims.
-- For the experiment, keep confirmed evidence, submitted versions and audit records indefinitely. There is no automatic retention deletion. Production retention policy is an explicit follow-up decision.
+- Keep confirmed evidence, submitted versions and audit records indefinitely ([ADR 0003](adr/0003-keep-original-receipt-files.md)). There is no automatic retention deletion; a retention policy is an open decision (DECISIONS.md).
 
 ## Entry and payout model
 
@@ -70,6 +70,6 @@ After the Core passes, implement these stages in the owner-confirmed order. They
 
 ## Other extensions
 
-Litestream replication; XML e-invoices and ZUGFeRD parsing; PDF/A-3b with embedded originals and visible receipt pages; receipt crop/perspective correction and advanced compression; templates and project autocomplete; PWA installation and offline capture; general-purpose personal upload tokens; routing-based distance calculation; employer accounting deductions and DATEV; sophisticated three-month-limit detection; release automation and supply-chain attestation.
+Litestream replication; XML e-invoices and ZUGFeRD parsing; PDF/A-3b with embedded originals; receipt crop/perspective correction and advanced compression; templates and project autocomplete; PWA installation and offline capture; general-purpose personal upload tokens; routing-based distance calculation; employer accounting deductions and DATEV; sophisticated three-month-limit detection; supply-chain attestation.
 
 Other tax regimes, payroll calculations, approval workflows, private-trip cost allocation, company-car logs and horizontal scaling are outside this baseline.
