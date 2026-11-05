@@ -169,7 +169,10 @@ jobs:
       - if: failure()
         run: docker logs spesen || true
 
-  check:
+  # Required check `ci` in the ruleset. Its name must stay unique across workflows: a second job
+  # called `check` (lint.yml had one) satisfied the ruleset before the area jobs finished.
+  # Green when every area job passed or was skipped; if: always() so a failure cannot hide.
+  ci:
     if: always()
     needs: [changes, go, web, e2e, docker]
     runs-on: ubuntu-latest
