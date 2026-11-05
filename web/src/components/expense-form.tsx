@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { ChevronDownIcon, FileIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
-import { listReceiptsOptions } from "@/api/gen/@tanstack/react-query.gen";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckIcon, ChevronDownIcon, ExternalLinkIcon, FileIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { confirmReceiptMutation, listReceiptsOptions } from "@/api/gen/@tanstack/react-query.gen";
 import type { Expense, ExpenseInput, Receipt, VatPortion } from "@/api/gen/types.gen";
 import { costTypeLabel } from "@/components/common";
 import { ReceiptCapture, ReceiptFilePicker } from "@/components/receipt-capture";
@@ -407,7 +408,16 @@ function ReceiptPicker({ selected, onChange }: { selected: number[]; onChange: (
   const usable = receipts.filter((r) => r.status !== "void");
   const chosen = usable.filter((r) => selected.includes(r.id));
   const available = usable.filter((r) => !selected.includes(r.id) && r.expenses.length === 0);
+  const pending = chosen.filter((r) => r.status === "inbox");
   const add = (ids: number[]) => onChange([...new Set([...selected, ...ids])]);
+  // After a confirm the pending block disappears; keep keyboard focus on that receipt's chip.
+  const [focusId, setFocusId] = useState<number | null>(null);
+  const focusReady = focusId !== null && chosen.some((r) => r.id === focusId && r.status !== "inbox");
+  useEffect(() => {
+    if (!focusReady) return;
+    document.querySelector<HTMLElement>(`[data-receipt-id="${focusId}"]`)?.focus();
+    setFocusId(null);
+  }, [focusReady, focusId]);
   return (
     <div className="grid gap-2">
       <Label>{m.receipts()}</Label>
@@ -429,9 +439,71 @@ function ReceiptPicker({ selected, onChange }: { selected: number[]; onChange: (
         <ReceiptFilePicker onUploaded={add} />
         <SelfIssuedDialog onCreated={(id) => add([id])} />
       </div>
-      {chosen.some((r) => r.status === "inbox") ? (
-        <p className="text-xs text-muted-foreground">{m.receipt_confirm_later()}</p>
+      {pending.length > 0 ? (
+        <div className="grid gap-2">
+          <p className="text-sm text-muted-foreground">{m.confirm_receipt_text()}</p>
+          {pending.map((r) => (
+            <PendingReceipt key={r.id} receipt={r} onConfirmed={() => setFocusId(r.id)} />
+          ))}
+        </div>
       ) : null}
+    </div>
+  );
+}
+
+/** Large preview with the confirm action, so a receipt can be checked while the expense is entered. */
+function PendingReceipt({ receipt, onConfirmed }: { receipt: Receipt; onConfirmed: () => void }) {
+  const qc = useQueryClient();
+  const confirmR = useMutation({
+    ...confirmReceiptMutation(),
+    onSuccess: (r) => {
+      qc.invalidateQueries({ queryKey: [{ _id: "getDashboard" }] });
+      qc.invalidateQueries({ queryKey: [{ _id: "listOutlays" }] });
+      qc.invalidateQueries({ queryKey: [{ _id: "getTrip" }] });
+      qc.invalidateQueries({ queryKey: [{ _id: "listTrips" }] });
+      toast.success(m.receipt_confirmed({ number: r.number }));
+      onConfirmed();
+    },
+    // Also after an error (e.g. confirmed elsewhere) so the block reflects the real state.
+    onSettled: () => qc.invalidateQueries({ queryKey: [{ _id: "listReceipts" }] }),
+  });
+  const name = receipt.filename || formatDate(receipt.createdAt);
+  return (
+    <div className="flex items-center gap-3 rounded-lg border p-2">
+      {receipt.hasPreview ? (
+        <img
+          src={`/api/receipts/${receipt.id}/preview`}
+          alt={m.receipt_preview()}
+          className="h-28 w-20 shrink-0 rounded object-cover object-top"
+        />
+      ) : null}
+      <div className="grid min-w-0 gap-2 text-sm">
+        <span className="truncate text-xs text-muted-foreground">{name}</span>
+        {receipt.kind === "file" ? (
+          <a
+            href={`/api/receipts/${receipt.id}/file`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-primary hover:underline"
+          >
+            <ExternalLinkIcon className="size-4" />
+            {receipt.mime === "application/pdf"
+              ? m.open_pdf({ pages: String(receipt.pages) })
+              : m.open_original()}
+          </a>
+        ) : null}
+        {receipt.duplicate ? <Alert variant="warning">{m.duplicate_text()}</Alert> : null}
+        <Button
+          variant="outline"
+          aria-label={m.confirm_receipt_for({ name })}
+          className="justify-self-start"
+          onClick={() => confirmR.mutate({ path: { id: receipt.id } })}
+          disabled={confirmR.isPending}
+        >
+          <CheckIcon />
+          {m.confirm_receipt()}
+        </Button>
+      </div>
     </div>
   );
 }
@@ -448,6 +520,7 @@ function ReceiptChip({
   return (
     <button
       type="button"
+      data-receipt-id={receipt.id}
       onClick={onClick}
       aria-pressed={selected}
       className={cn(

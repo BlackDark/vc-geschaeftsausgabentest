@@ -44,6 +44,17 @@ test("F01 first working flow", async ({ page }) => {
     .first()
     .setInputFiles({ name: "hotel.png", mimeType: "image/png", buffer: receiptPng(1) });
   await expect(dialog.getByRole("button", { name: /unbestätigt/ })).toBeVisible();
+  // The pending block links to the original, and confirming works without leaving the dialog.
+  const original = dialog.getByRole("link", { name: "Original öffnen" });
+  await expect(original).toHaveAttribute("href", /\/api\/receipts\/\d+\/file$/);
+  await expect(original).toHaveAttribute("target", "_blank");
+  await expect(original).toHaveAttribute("rel", /noreferrer/);
+  await dialog.getByRole("button", { name: "Lesbar – bestätigen: hotel.png" }).click();
+  const chip = dialog.getByRole("button", { name: /B-\d{4}-\d{4}/ });
+  await expect(chip).toBeVisible();
+  await expect(chip).toBeFocused();
+  const receiptNumber = (await chip.innerText()).match(/B-\d{4}-\d{4}/)![0];
+  await expect(dialog.getByRole("button", { name: /Lesbar – bestätigen/ })).toHaveCount(0);
   await dialog.getByLabel("Kostenart", { exact: true }).selectOption("lodging");
   await dialog.getByLabel("Datum", { exact: true }).fill("2026-04-15");
   await dialog.getByLabel("Betrag brutto", { exact: true }).fill("178,00");
@@ -52,6 +63,7 @@ test("F01 first working flow", async ({ page }) => {
   await shot(page, "03-expense-dialog");
   await dialog.getByRole("button", { name: "Speichern" }).click();
   await expect(page.getByText("Hotel Hafen")).toBeVisible();
+  await expect(page.getByText(receiptNumber)).toHaveCount(1);
   await expect(page.getByText("44,80 €").first()).toBeVisible();
   await expect(page.getByText("222,80 €").first()).toBeVisible();
   await shot(page, "04-trip-detail");
@@ -78,9 +90,9 @@ test("F01 first working flow", async ({ page }) => {
   }
   await shot(page, "05-outlays");
 
-  // Confirm all three receipts in the inbox.
+  // Confirm the two outlay receipts in the inbox (the hotel receipt is already confirmed).
   await page.goto("/receipts");
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     await page.getByRole("tabpanel").getByRole("button").first().click();
     await page.getByRole("button", { name: "Lesbar – bestätigen" }).click();
     await expect(page.getByText(/Beleg B-\d{4}-\d{4} bestätigt/).last()).toBeVisible();
