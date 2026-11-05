@@ -9,7 +9,7 @@ This is the behavioral contract for the Core calculation module. Annual values a
 | C01 | Store monetary amounts as integer minor units with a currency code and exponent; EUR uses cents. Do not assume every foreign currency has two decimal places. Use exact decimal/rational arithmetic for FX and distance. EUR rounding is half away from zero at the final conversion or percentage operation. |
 | C02 | Store instants plus IANA zones; preserve local dates relevant to the itinerary. Calculate elapsed absence from instants, not a subtraction of wall-clock displays. Use local calendar dates for day types and rate years. Reject overlapping trips; touching intervals are allowed. |
 | C03 | Return inputs, effective date, rate value/source/revision, stable rule ID, intermediate amounts, final amounts and warnings for each calculation line. The frontend displays server results. |
-| C04 | Use the travel day's year for meal/lodging rates and the journey's date for mileage. Missing or invalid required rate data is a blocker. Reuse the inherited CSVs in data/README.md; synthetic comparison fixtures do not replace them. Use overrides in drafts, with revision and reason; snapshots retain the values used at submission. |
+| C04 | Use the travel day's year for meal/lodging rates and the journey's date for mileage. Missing or invalid required rate data is a blocker. Reuse the inherited CSVs in data/README.md; synthetic fixtures do not replace them. Use overrides in drafts, with revision and reason; snapshots retain the values used at submission. |
 
 ## Meal allowance
 

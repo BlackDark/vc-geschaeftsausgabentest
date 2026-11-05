@@ -2,7 +2,7 @@
 
 ## Technology choices
 
-Decided with the owner on 2026-10-19 (see [DECISIONS.md](DECISIONS.md#owner-decisions-2026-10-19)). The previous Go/Svelte/sqlc/OpenAPI-first stack was replaced by the owner's default stack where it fits, keeping Go for a small, static backend.
+Decided with the owner on 2026-10-19 (see [DECISIONS.md](DECISIONS.md#owner-decisions-2026-10-19) and [ADR 0001](adr/0001-go-huma-hey-api-stack.md) for why Go with Huma and Hey API).
 
 | Area | Choice |
 | --- | --- |
