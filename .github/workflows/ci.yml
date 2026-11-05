@@ -3,10 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore: ["**.md", "docs/**", "LICENSE"]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore: ["**.md", "docs/**", "LICENSE"]
   workflow_call:
   workflow_dispatch:
 
