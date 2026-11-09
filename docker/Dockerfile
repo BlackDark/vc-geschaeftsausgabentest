@@ -5,7 +5,7 @@
 FROM --platform=$BUILDPLATFORM node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS web
 WORKDIR /src/web
 # Node 26 images ship no corepack; keep in sync with packageManager in web/package.json
-ARG PNPM_VERSION=12.16.1
+ARG PNPM_VERSION=12.18.0
 RUN npm install --global "pnpm@${PNPM_VERSION}"
 COPY web/package.json web/pnpm-lock.yaml web/pnpm-workspace.yaml ./
 COPY web/tools/codegen/package.json tools/codegen/package.json
