@@ -2,7 +2,7 @@
 # Multi-arch build without emulation: every build step runs on the build
 # platform; only the final stage is assembled for the target platform.
 
-FROM --platform=$BUILDPLATFORM node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS web
+FROM --platform=$BUILDPLATFORM node:26.13.0-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS web
 WORKDIR /src/web
 # Node 26 images ship no corepack; keep in sync with packageManager in web/package.json
 ARG PNPM_VERSION=12.16.1
