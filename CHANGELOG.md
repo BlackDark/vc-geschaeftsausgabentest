@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.1](https://github.com/BlackDark/vc-geschaeftsausgabentest/compare/v0.2.0...v0.2.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **deps:** update go modules (non-major) ([#61](https://github.com/BlackDark/vc-geschaeftsausgabentest/issues/61)) ([2c35eea](https://github.com/BlackDark/vc-geschaeftsausgabentest/commit/2c35eea468682fc76b85ccaefdc2eed49f8988dc))
+
+
+### Refactoring
+
+* **deps:** update dependencies (non-major) ([#62](https://github.com/BlackDark/vc-geschaeftsausgabentest/issues/62)) ([726dbb2](https://github.com/BlackDark/vc-geschaeftsausgabentest/commit/726dbb2830e2493e6d49d453ffae16ce9a63b37b))
+
 ## [0.2.0](https://github.com/BlackDark/vc-geschaeftsausgabentest/compare/v0.1.2...v0.2.0) (2026-11-05)
 
 
